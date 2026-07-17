@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0d1821" />
+    <title>Glitch Run, standalone</title>
+    <link rel="stylesheet" href="../src/style.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <canvas id="game" aria-label="Glitch Run game"></canvas>
+    <div class="grain" aria-hidden="true"></div>
+    <div id="damage-flash" class="damage-flash" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <div class="brand"><div class="brand-mark">G</div><div><span class="eyebrow">TEX ARCADE</span><strong>Glitch Run</strong></div></div>
+      <div class="topbar-actions">
+        <button id="sound-toggle" class="ghost-button sound-button active" type="button" aria-pressed="true">Geluid: Aan</button><button id="camera-mode" class="ghost-button camera-mode-button hidden" type="button" aria-pressed="false">Camera: Achter</button>
+        <button id="pause-button" class="ghost-button hidden" type="button">Pauze</button><button id="change-character" class="ghost-button hidden" type="button">Character</button><div class="status-pill"><span class="status-dot"></span><span id="load-status">Characters laden…</span></div></div>
+    </header>
+    <section class="selection-screen" id="selection-screen" aria-labelledby="selection-title"><div class="selection-heading"><span class="eyebrow">ESCAPE THE SIMULATION</span><h1 id="selection-title">Kies je runner</h1><p>Ren voor de glitch uit, ontwijk firewalls en verzamel Data Shards.</p></div><div class="selection-panel"><div class="mode-strip"><span class="mode-chip"><b>∞</b> Endless run</span><span class="mode-chip"><b>3</b> Integriteit</span><span class="mode-chip"><b>×5</b> Combo</span><span class="mode-chip"><b>↑</b> Steeds sneller</span>
+          <span class="mode-chip"><b>C</b> Crash-camera</span></div><div class="character-grid" id="character-grid"></div><div class="selection-footer"><div><span class="selection-label">Geselecteerd</span><strong id="selected-character-name">Casper</strong><small id="selected-character-meta">Idle, walk, run en jump</small></div><button id="start-game" class="start-button" type="button" disabled>Start Glitch Run <span>→</span></button></div></div></section>
+    <section id="hud" class="hud hidden"><div class="hud-primary"><div class="hud-stat"><span>Score</span><strong id="score-value">0</strong></div><div class="hud-stat"><span>Afstand</span><strong><b id="distance-value">0</b> m</strong></div><div class="hud-stat"><span>Shards</span><strong id="shards-value">0</strong></div><div class="hud-stat combo"><span>Combo</span><strong id="combo-value">×1</strong></div></div><div class="hud-bars"><div class="meter integrity-meter"><div class="meter-label"><span>Integriteit</span><strong id="integrity-value">◆ ◆ ◆</strong></div></div><div class="meter"><div class="meter-label"><span>Overclock</span><strong id="energy-value">35%</strong></div><div class="meter-track"><div id="energy-bar" class="meter-fill energy-fill"></div></div></div><div class="meter danger-meter"><div class="meter-label"><span>Glitchdruk</span><strong id="pressure-value">8%</strong></div><div class="meter-track"><div id="pressure-bar" class="meter-fill pressure-fill"></div></div></div></div></section>
+    <aside id="mission-card" class="mission-card hidden"><span class="eyebrow">ZONE <b id="zone-value">1</b></span><strong id="mission-title">Blijf vóór de glitch</strong><p id="mission-detail">A en D om te sturen, spatie om te springen.</p></aside>
+    <div id="countdown" class="countdown hidden">3</div><div id="toast" class="toast hidden"></div>
+    <section id="pause-screen" class="overlay-screen hidden"><div class="overlay-panel compact"><span class="eyebrow">RUN GEPAUZEERD</span><h2>Even ademhalen</h2><p>De simulatie staat stil. De glitch gelukkig ook.</p><div class="overlay-actions"><button id="resume-game" class="start-button" type="button">Verder spelen</button><button id="pause-select-character" class="secondary-button" type="button">Character kiezen</button></div></div></section>
+    <section id="game-over-screen" class="overlay-screen hidden"><div class="overlay-panel"><span class="eyebrow">SIGNAL LOST</span><h2>De glitch heeft je ingehaald</h2><div class="result-grid"><div><span>Score</span><strong id="result-score">0</strong></div><div><span>Afstand</span><strong><b id="result-distance">0</b> m</strong></div><div><span>Data Shards</span><strong id="result-shards">0</strong></div><div><span>Beste score</span><strong id="result-best">0</strong></div></div><p id="result-message">Nog één run. Deze keer kom je verder.</p><div class="overlay-actions"><button id="restart-game" class="start-button" type="button">Opnieuw rennen</button><button id="game-over-select-character" class="secondary-button" type="button">Character kiezen</button></div></div></section>
+    <div id="controls-hint" class="controls-hint hidden"><span><kbd>A D</kbd> sturen</span><span><kbd>Space</kbd> springen</span><span><kbd>Shift</kbd> overclock</span><span><kbd>C</kbd> camera</span><span><kbd>M</kbd> geluid</span><span><kbd>Esc</kbd> pauze</span></div>
+    <div class="mobile-controls hidden" id="mobile-controls"><div class="mobile-steer"><button data-key="KeyA">◀</button><button data-key="KeyD">▶</button></div><div class="mobile-actions"><button id="mobile-camera-mode" class="camera-button" type="button" aria-label="Camera wisselen">CAM</button><button data-key="ShiftLeft" class="boost-button">BOOST</button><button data-key="Space" class="jump-button">JUMP</button></div></div>
+    <div class="loading-screen" id="loading-screen"><div class="loader-ring"></div><p>Simulatie opstarten</p><small id="loading-detail">Modellen, skeletons en animaties laden…</small></div>
+    <script type="module" src="../src/main.js"></script>
+  </body>
+</html>
