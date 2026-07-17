@@ -1,3 +1,30 @@
+const nativeFetch = window.fetch.bind(window);
+let mainSourcePatched = false;
+
+window.fetch = async (...args) => {
+  const response = await nativeFetch(...args);
+  const requestedUrl = String(args[0] instanceof Request ? args[0].url : args[0]);
+
+  if (!mainSourcePatched && requestedUrl.includes('/src/main.js')) {
+    mainSourcePatched = true;
+    window.fetch = nativeFetch;
+
+    const source = await response.text();
+    const patchedSource = source.replace(
+      'this.musicGain.gain.value = 0.22;',
+      'this.musicGain.gain.value = 0;'
+    );
+
+    return new Response(patchedSource, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers
+    });
+  }
+
+  return response;
+};
+
 const pagePath = window.location.pathname.endsWith('/')
   ? window.location.pathname
   : window.location.pathname.replace(/\/[^/]*$/, '/');
@@ -27,10 +54,10 @@ function soundEnabled() {
 
 function desiredVolume() {
   if (!soundEnabled() || document.hidden) return 0;
-  if (!selectionScreen?.classList.contains('closed')) return 0.065;
-  if (!pauseScreen?.classList.contains('hidden')) return 0.045;
-  if (!gameOverScreen?.classList.contains('hidden')) return 0.055;
-  return 0.105;
+  if (!selectionScreen?.classList.contains('closed')) return 0.045;
+  if (!pauseScreen?.classList.contains('hidden')) return 0.03;
+  if (!gameOverScreen?.classList.contains('hidden')) return 0.04;
+  return 0.085;
 }
 
 function fadeTo(target, duration = 650) {
