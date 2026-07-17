@@ -7,6 +7,7 @@
     <meta name="description" content="Glitch Run, een endless runner met vijf persoonlijke 3D-characters." />
     <title>Glitch Run</title>
     <link rel="stylesheet" href="./src/style.css" />
+    <link rel="stylesheet" href="./src/patch.css?v=12" />
     <script type="importmap">
       {
         "imports": {
@@ -53,7 +54,7 @@
           <span class="mode-chip"><b>∞</b> Endless run</span>
           <span class="mode-chip"><b>3</b> Integriteit</span>
           <span class="mode-chip"><b>×5</b> Combo</span>
-          <span class="mode-chip"><b>↑</b> Steeds sneller</span>
+          <span class="mode-chip"><b>⏱</b> Sprint met herstel</span>
           <span class="mode-chip"><b>C</b> Crash-camera</span>
         </div>
         <div class="character-grid" id="character-grid" aria-label="Beschikbare characters"></div>
@@ -83,11 +84,11 @@
           <div class="meter-label"><span>Integriteit</span><strong id="integrity-value">◆ ◆ ◆</strong></div>
         </div>
         <div class="meter">
-          <div class="meter-label"><span>Overclock</span><strong id="energy-value">35%</strong></div>
+          <div class="meter-label"><span>Sprint</span><strong id="energy-value">100%</strong></div>
           <div class="meter-track"><div id="energy-bar" class="meter-fill energy-fill"></div></div>
         </div>
         <div class="meter danger-meter">
-          <div class="meter-label"><span>Glitchdruk</span><strong id="pressure-value">8%</strong></div>
+          <div class="meter-label"><span>Glitchdruk</span><strong id="pressure-value">20%</strong></div>
           <div class="meter-track"><div id="pressure-bar" class="meter-fill pressure-fill"></div></div>
         </div>
       </div>
@@ -122,7 +123,7 @@
           <div><span>Score</span><strong id="result-score">0</strong></div>
           <div><span>Afstand</span><strong><b id="result-distance">0</b> m</strong></div>
           <div><span>Coins</span><strong id="result-shards">0</strong></div>
-          <div><span>Beste score</span><strong id="result-best">0</strong></div>
+          <div><span>Characterrecord</span><strong id="result-best">0</strong></div>
         </div>
         <p id="result-message">Nog één run. Deze keer kom je verder.</p>
         <div class="overlay-actions">
@@ -135,7 +136,7 @@
     <div id="controls-hint" class="controls-hint hidden">
       <span><kbd>A D</kbd> sturen</span>
       <span><kbd>Space</kbd> springen</span>
-      <span><kbd>Shift</kbd> overclock</span>
+      <span><kbd>Shift</kbd> sprinten</span>
       <span><kbd>C</kbd> camera</span>
       <span><kbd>M</kbd> geluid</span>
       <span><kbd>Esc</kbd> pauze</span>
@@ -148,7 +149,7 @@
       </div>
       <div class="mobile-actions">
         <button id="mobile-camera-mode" class="camera-button" type="button" aria-label="Camera wisselen">CAM</button>
-        <button data-key="ShiftLeft" class="boost-button">BOOST</button>
+        <button data-key="ShiftLeft" class="boost-button">SPRINT</button>
         <button data-key="Space" class="jump-button">JUMP</button>
       </div>
     </div>
@@ -159,6 +160,6 @@
       <small id="loading-detail">Modellen, skeletons en animaties laden…</small>
     </div>
 
-    <script type="module" src="./src/bootstrap.js?v=11"></script>
+    <script type="module" src="./src/bootstrap.js?v=12"></script>
   </body>
 </html>
