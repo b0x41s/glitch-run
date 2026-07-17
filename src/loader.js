@@ -7,15 +7,16 @@ if (!response.ok) {
 
 let source = await response.text();
 
-source = source.replace(
-  `function resolveAsset(path) {
-  if (import.meta.env?.BASE_URL) return \`${'${import.meta.env.BASE_URL}'}${'${path}'}\`;
-  return new URL(\`../public/${'${path}'}\`, import.meta.url).href;
-}`,
-  `function resolveAsset(path) {
+const assetFunctionStart = source.indexOf('function resolveAsset(path) {');
+const assetFunctionEnd = source.indexOf('\n}\n\nfunction renderCharacterCards', assetFunctionStart);
+
+if (assetFunctionStart === -1 || assetFunctionEnd === -1) {
+  throw new Error('Kon de assetresolver niet aanpassen.');
+}
+
+source = `${source.slice(0, assetFunctionStart)}function resolveAsset(path) {
   return new URL(path, document.baseURI).href;
-}`
-);
+}${source.slice(assetFunctionEnd + 2)}`;
 
 source = source.replace(
   `    if (gameState === 'playing' && options.grounded) {
