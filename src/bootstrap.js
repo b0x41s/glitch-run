@@ -1,5 +1,5 @@
 const mainUrl = new URL('./main.js', import.meta.url);
-mainUrl.searchParams.set('v', '9');
+mainUrl.searchParams.set('v', '10');
 
 const response = await fetch(mainUrl, { cache: 'no-store' });
 if (!response.ok) {
@@ -24,17 +24,15 @@ source = `${source.slice(0, assetFunctionStart)}function resolveAsset(path) {
 }${source.slice(assetFunctionEnd + 2)}`;
 
 source = source.replace(
-  `    if (gameState === 'playing' && options.grounded) {
-      this.footstepTimer -= delta;
-      if (this.footstepTimer <= 0) {
-        this.footstep(options.speed || 7);
-        this.footstepTimer = Math.max(0.18, 0.42 - (options.speed || 7) * 0.017);
-      }
-    } else {
-      this.footstepTimer = 0;
+  `    const boosting = Boolean(options.boosting);
+    if (boosting !== this.lastBoosting) {
+      if (boosting) this.startBoostHum();
+      else this.stopBoostHum();
+      this.lastBoosting = boosting;
     }`,
-  `    // Voetstappen zijn uitgeschakeld, de overige geluidseffecten blijven actief.
-    this.footstepTimer = 0;`
+  `    const boosting = Boolean(options.boosting);
+    if (!boosting && this.lastBoosting) this.stopBoostHum();
+    this.lastBoosting = boosting;`
 );
 
 source = source.replace(
