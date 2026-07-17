@@ -1,5 +1,5 @@
 const mainUrl = new URL('./main.js', import.meta.url);
-mainUrl.searchParams.set('v', '8');
+mainUrl.searchParams.set('v', '9');
 
 const response = await fetch(mainUrl, { cache: 'no-store' });
 if (!response.ok) {
@@ -20,7 +20,7 @@ source = `${source.slice(0, assetFunctionStart)}function resolveAsset(path) {
     ? window.location.pathname
     : window.location.pathname.replace(/\\/[^/]*$/, '/');
   const cleanPath = String(path).replace(/^\\.?\\//, '');
-  return window.location.origin + pagePath + cleanPath;
+  return window.location.origin + pagePath + 'public/' + cleanPath;
 }${source.slice(assetFunctionEnd + 2)}`;
 
 source = source.replace(
