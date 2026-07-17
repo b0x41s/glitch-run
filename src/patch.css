@@ -1,0 +1,37 @@
+.card-best {
+  position: relative;
+  z-index: 1;
+  display: block;
+  margin-top: 7px;
+  color: var(--heading);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .02em;
+}
+
+.energy-fill.exhausted {
+  background: linear-gradient(90deg, #ff4d69, #f0b84b);
+  box-shadow: 0 0 16px rgba(255, 77, 105, .58);
+  animation: energy-warning .58s ease-in-out infinite alternate;
+}
+
+.pressure-fill.critical {
+  animation: pressure-warning .4s ease-in-out infinite alternate;
+}
+
+.damage-flash {
+  background:
+    repeating-linear-gradient(0deg, transparent 0 7px, rgba(158, 66, 231, .045) 8px 9px),
+    radial-gradient(circle at 50% 44%, transparent 22%, rgba(158, 66, 231, .17) 58%, rgba(255, 35, 76, .62) 100%);
+  mix-blend-mode: screen;
+}
+
+@keyframes energy-warning {
+  from { filter: brightness(.82); }
+  to { filter: brightness(1.35); }
+}
+
+@keyframes pressure-warning {
+  from { filter: brightness(.9); }
+  to { filter: brightness(1.55); }
+}
