@@ -1,10 +1,10 @@
 # Glitch Run
 
+![Glitch Run hero artwork](docs/glitch-run-hero.jpg)
+
 Een speelbare Three.js endless runner met Casper, Bas, Tamara, Lisette en Laurens.
 
 ## Live spelen
-
-Na het activeren van GitHub Pages is de game beschikbaar op:
 
 <https://b0x41s.github.io/glitch-run/>
 
@@ -12,15 +12,28 @@ Na het activeren van GitHub Pages is de game beschikbaar op:
 
 - Automatisch vooruit rennen door een procedureel opgebouwde cyberwereld
 - Hoge firewalls ontwijken en lage barrières overspringen
-- Data Shards verzamelen voor score, combo, energie en lagere glitchdruk
-- Overclock gebruiken voor extra snelheid
-- Drie integriteitspunten en een glitchmuur die steeds dichterbij komt
-- Toenemende snelheid en obstakeldichtheid per zone
-- Lokale topscore in de browser
+- Gouden coins verzamelen voor score, combo en sprintenergie
+- Tijdelijk sprinten met `Shift`, daarna moet het character op adem komen
+- Drie integriteitspunten en een zichtbare glitchmuur die steeds dichterbij komt
+- Korte zones, hogere snelheid en snel oplopende obstakeldichtheid
+- Waarschuwingen, schermdruk en sterkere effecten wanneer de glitch dichtbij komt
+- Afzonderlijke lokale highscores voor Casper, Bas, Tamara, Lisette en Laurens
 - Characterselectie met buiganimatie, pauzescherm, game-over en opnieuw spelen
 - Wisselbare volgcamera en frontale Crash-camera
 - Procedurele muziek en geluidseffecten via de Web Audio API
 - Desktop en mobiele besturing
+
+## Besturing
+
+- `A` en `D`, of de pijltjestoetsen, sturen naar links en rechts
+- `Spatie`, springen
+- `Shift`, enkele seconden sprinten, loslaten om te herstellen
+- `W`, lichte versnelling
+- `S`, afremmen
+- `C`, wisselen tussen de volgcamera en de frontale Crash-camera
+- `M`, geluid aan of uit
+- `Esc`, pauzeren
+- `R`, opnieuw starten na game-over
 
 ## Lokaal starten
 
@@ -48,22 +61,11 @@ Activeer dit eenmalig via:
 Repository → Settings → Pages → Build and deployment → Source → GitHub Actions
 ```
 
-## Besturing
-
-- `A` en `D`, of de pijltjestoetsen, sturen naar links en rechts
-- `Spatie`, springen
-- `Shift`, overclock gebruiken zolang energie beschikbaar is
-- `W`, lichte versnelling
-- `S`, afremmen
-- `C`, wisselen tussen de volgcamera en de frontale Crash-camera
-- `M`, geluid aan of uit
-- `Esc`, pauzeren
-- `R`, opnieuw starten na game-over
-
 ## Techniek
 
 - Three.js
 - Vite
 - glTF/GLB characters met skelet en animaties
 - Web Audio API
+- Lokale opslag voor highscores per character
 - GitHub Actions en GitHub Pages
