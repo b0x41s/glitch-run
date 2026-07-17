@@ -1,6 +1,6 @@
 # Glitch Run
 
-![Glitch Run hero artwork](docs/glitch-run-hero.jpg)
+![Glitch Run hero artwork](docs/cover.png)
 
 Een speelbare Three.js endless runner met Casper, Bas, Tamara, Lisette en Laurens.
 
