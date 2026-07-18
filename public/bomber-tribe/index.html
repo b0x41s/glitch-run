@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#0d1821">
+  <title>Bomber Tribe</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Bomber Tribe">
+        <span class="brand-mark">BT</span>
+        <span>
+          <strong>BOMBER TRIBE</strong>
+          <small>Arcade arena</small>
+        </span>
+      </a>
+      <div class="top-actions">
+        <button id="soundButton" class="icon-button" type="button" aria-label="Geluid aan of uit">🔊</button>
+        <button id="pauseButton" class="icon-button" type="button" aria-label="Pauzeren">Ⅱ</button>
+      </div>
+    </header>
+
+    <section class="game-layout">
+      <aside class="hud-card" aria-label="Spelstatus">
+        <div class="hud-player">
+          <img id="hudPortrait" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" data-character-image="0" alt="Geselecteerd character">
+          <div>
+            <span id="hudName">Casper</span>
+            <small>Jouw character</small>
+          </div>
+        </div>
+        <div class="hud-grid">
+          <div><span>Score</span><strong id="scoreValue">0</strong></div>
+          <div><span>Munten</span><strong id="coinsValue">0</strong></div>
+          <div><span>Tijd</span><strong id="timeValue">02:30</strong></div>
+          <div><span>Beste</span><strong id="highscoreValue">0</strong></div>
+        </div>
+        <div class="power-row">
+          <div title="Aantal bommen"><span>💣</span><strong id="bombValue">1</strong></div>
+          <div title="Explosiebereik"><span>🔥</span><strong id="flameValue">2</strong></div>
+          <div title="Loopsnelheid"><span>⚡</span><strong id="speedValue">1</strong></div>
+        </div>
+        <div class="controls-hint">
+          <strong>Besturing</strong>
+          <span>WASD of pijltjes</span>
+          <span>Spatie voor een bom</span>
+        </div>
+      </aside>
+
+      <section class="arena-card">
+        <canvas id="gameCanvas" width="624" height="528" aria-label="Bomberman speelveld"></canvas>
+        <div id="statusBanner" class="status-banner hidden" role="status"></div>
+      </section>
+    </section>
+
+    <section class="mobile-controls" aria-label="Mobiele besturing">
+      <div class="dpad">
+        <button data-direction="up" aria-label="Omhoog">▲</button>
+        <button data-direction="left" aria-label="Links">◀</button>
+        <button data-direction="down" aria-label="Omlaag">▼</button>
+        <button data-direction="right" aria-label="Rechts">▶</button>
+      </div>
+      <button id="mobileBombButton" class="bomb-button" type="button" aria-label="Plaats bom">💣</button>
+    </section>
+  </main>
+
+  <div id="startOverlay" class="overlay open">
+    <div class="modal character-modal">
+      <div class="modal-heading">
+        <span class="eyebrow">BOMBER TRIBE</span>
+        <h1>Kies je character</h1>
+        <p>Breek de kisten, verzamel upgrades en schakel de andere spelers uit.</p>
+      </div>
+
+      <div id="characterGrid" class="character-grid" role="radiogroup" aria-label="Characterselectie">
+        <button class="character-card selected" data-character="0" type="button" role="radio" aria-checked="true">
+          <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" data-character-image="0" alt="Casper, blauwe hoodie">
+          <span><strong>Casper</strong><small>Blauwe hoodie</small></span>
+          <i>✓</i>
+        </button>
+        <button class="character-card" data-character="1" type="button" role="radio" aria-checked="false">
+          <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" data-character-image="1" alt="Milo, rode hoodie">
+          <span><strong>Milo</strong><small>Rode hoodie</small></span>
+          <i>✓</i>
+        </button>
+        <button class="character-card" data-character="2" type="button" role="radio" aria-checked="false">
+          <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" data-character-image="2" alt="Lina, wit shirt">
+          <span><strong>Lina</strong><small>Wit shirt</small></span>
+          <i>✓</i>
+        </button>
+        <button class="character-card" data-character="3" type="button" role="radio" aria-checked="false">
+          <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" data-character-image="3" alt="Nova, zwart shirt">
+          <span><strong>Nova</strong><small>Krullend haar</small></span>
+          <i>✓</i>
+        </button>
+        <button class="character-card" data-character="4" type="button" role="radio" aria-checked="false">
+          <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" data-character-image="4" alt="Bas, zwart shirt">
+          <span><strong>Bas</strong><small>Zwart shirt</small></span>
+          <i>✓</i>
+        </button>
+      </div>
+
+      <div class="game-options">
+        <label>
+          <span>Moeilijkheid</span>
+          <select id="difficultySelect">
+            <option value="easy">Rustig</option>
+            <option value="normal" selected>Normaal</option>
+            <option value="hard">Chaos</option>
+          </select>
+        </label>
+        <div class="selected-stats">
+          <span>Highscore character</span>
+          <strong id="selectedHighscore">0</strong>
+        </div>
+      </div>
+
+      <button id="startButton" class="primary-button" type="button">Characters laden…</button>
+    </div>
+  </div>
+
+  <div id="endOverlay" class="overlay">
+    <div class="modal result-modal">
+      <div id="resultIcon" class="result-icon">🏆</div>
+      <span class="eyebrow">RONDE AFGELOPEN</span>
+      <h2 id="resultTitle">Gewonnen</h2>
+      <p id="resultText">Je hebt de arena overleefd.</p>
+      <div class="result-score">
+        <span>Score</span>
+        <strong id="resultScore">0</strong>
+      </div>
+      <div class="result-actions">
+        <button id="retryButton" class="primary-button" type="button">Nog een ronde</button>
+        <button id="selectButton" class="secondary-button" type="button">Ander character</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
