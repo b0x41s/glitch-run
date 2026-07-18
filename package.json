@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "build": "vite build && rm -rf dist/bomber-tribe dist/metro-vice-96 && cp -R public/bomber-tribe dist/bomber-tribe && cp -R public/metro-vice-96 dist/metro-vice-96 && test -f dist/bomber-tribe/index.html && test -f dist/metro-vice-96/index.html",
+    "build": "vite build && rm -rf dist/bomber-tribe dist/metro-vice-96 dist/contraption-lab && cp -R public/bomber-tribe dist/bomber-tribe && cp -R public/metro-vice-96 dist/metro-vice-96 && cp -R public/contraption-lab dist/contraption-lab && test -f dist/bomber-tribe/index.html && test -f dist/metro-vice-96/index.html && test -f dist/contraption-lab/index.html",
     "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {
