@@ -53,7 +53,7 @@ updateBot = function updateSaferBot(bot, dt) {
 
   const threatened = cellDangerTime(tx, ty) <= 2.35;
   const outsideOwnBlast = !bot.escapeBomb || !getBlastCells(bot.escapeBomb, true).some(cell => cell.x === tx && cell.y === ty);
-  const waitingSafely = Boolean(bot.escapeBomb && outsideOwnBlast && cellDangerTime(tx, ty) > 1.1);
+  const waitingSafely = Boolean(bot.escapeBomb && outsideOwnBlast && cellDangerTime(tx, ty) > 2.5);
 
   if (waitingSafely) {
     bot.escapePath = [];
@@ -142,7 +142,7 @@ function findSafeRoute(bot, startX, startY, extraBomb = null, newBomb = false) {
       queue.push({ x: nx, y: ny, elapsed, path: [...node.path, { x: nx, y: ny }] });
     }
   }
-  return fallback;
+  return newBomb ? [] : fallback;
 }
 
 function cellDangerTime(tx, ty, extraBomb = null) {
