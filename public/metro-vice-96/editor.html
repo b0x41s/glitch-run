@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="theme-color" content="#0d1821">
+  <title>Metro Vice 96 kaarteditor</title>
+  <link rel="stylesheet" href="./editor.css">
+</head>
+<body>
+  <main class="editor-shell">
+    <header class="toolbar">
+      <div>
+        <strong>Metro Vice 96</strong>
+        <span>Kaarteditor</span>
+      </div>
+      <nav>
+        <a href="./">Test in game</a>
+        <button id="saveButton" type="button">Opslaan</button>
+        <button id="exportButton" type="button">Exporteer</button>
+      </nav>
+    </header>
+
+    <section class="workspace">
+      <aside class="panel">
+        <label>
+          <span>Laag</span>
+          <select id="layerSelect">
+            <option value="roads">Wegen</option>
+            <option value="water">Water</option>
+            <option value="bld">Gebouwen</option>
+            <option value="pts">Missiepunten</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Object</span>
+          <select id="objectSelect"></select>
+        </label>
+
+        <label>
+          <span>Zoom</span>
+          <input id="zoomInput" type="range" min="0.5" max="3" step="0.05" value="1">
+        </label>
+
+        <div class="button-grid">
+          <button id="addButton" type="button">Punt toevoegen</button>
+          <button id="deleteButton" type="button">Punt verwijderen</button>
+          <button id="centerButton" type="button">Centreren</button>
+          <button id="resetButton" type="button">Standaardkaart</button>
+        </div>
+
+        <label class="import-label">
+          <span>JSON importeren</span>
+          <input id="importInput" type="file" accept="application/json,.json">
+        </label>
+
+        <div class="help">
+          <strong>Gebruik</strong>
+          <p>Sleep gekleurde punten om wegen en water te verplaatsen. Sleep gebouwen en missiepunten rechtstreeks. Gebruik Punt toevoegen en tik daarna op de kaart om een nieuw punt in het dichtstbijzijnde segment te plaatsen.</p>
+          <p>Opslaan bewaart de kaart op dit apparaat. Open daarna Test in game om hem direct te spelen.</p>
+        </div>
+      </aside>
+
+      <div class="canvas-wrap" id="canvasWrap">
+        <canvas id="mapCanvas" width="1200" height="900" aria-label="Kaarteditor"></canvas>
+        <div class="status" id="statusText">Selecteer en sleep een punt.</div>
+      </div>
+    </section>
+  </main>
+
+  <script src="./map-data.js"></script>
+  <script src="./editor.js"></script>
+</body>
+</html>
