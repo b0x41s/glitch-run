@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#0d1821">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="Contraption Lab, een mobiele physics-puzzel in Tex Arcade.">
+  <title>Contraption Lab, Tex Arcade</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <h1>Contraption Lab</h1>
+        <p>Breng de groene bal naar het paarse doel.</p>
+      </div>
+      <div class="top-actions">
+        <a class="back" href="../">Games</a>
+        <div id="status" class="status" aria-live="polite">Bouwmodus</div>
+      </div>
+    </header>
+
+    <section class="stage" aria-label="Speelveld">
+      <canvas id="game" width="1000" height="620" aria-label="Interactief physics speelveld"></canvas>
+      <div id="hint" class="hint">Kies een onderdeel, tik om het te plaatsen, sleep om het te verplaatsen.</div>
+    </section>
+
+    <section class="panel">
+      <p class="label">Onderdelen</p>
+      <div class="grid tools">
+        <button type="button" data-tool="ramp" aria-pressed="false">Helling</button>
+        <button type="button" data-tool="bumper" aria-pressed="false">Bumper</button>
+        <button type="button" data-tool="fan" aria-pressed="false">Ventilator</button>
+        <button type="button" data-tool="ball" aria-pressed="false">Bal</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <p class="label">Besturing</p>
+      <div class="grid actions">
+        <button id="run" type="button" class="primary">Start</button>
+        <button id="rotate" type="button" class="purple">Draai 15°</button>
+        <button id="delete" type="button" class="danger">Verwijder</button>
+        <button id="reset" type="button">Reset level</button>
+        <button id="clear" type="button">Leeg bord</button>
+      </div>
+      <p class="help">Tik op een onderdeel om het te selecteren. De ventilator blaast in de richting van de pijlen.</p>
+    </section>
+  </main>
+
+  <script src="./core.js"></script>
+  <script src="./render.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
