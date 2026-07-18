@@ -24,6 +24,26 @@ function addMetroViceCard() {
   `);
 }
 
+function addContraptionLabCard() {
+  if (!arcadeGrid || arcadeGrid.querySelector('[data-arcade-game="contraption-lab"]')) return;
+
+  arcadeGrid.insertAdjacentHTML('beforeend', `
+    <a class="arcade-game-card glitch-run contraption-lab" data-arcade-game="contraption-lab" href="./contraption-lab/">
+      <span class="arcade-card-visual" aria-hidden="true"></span>
+      <span class="arcade-card-content">
+        <span class="arcade-card-meta">
+          <span>Physics-puzzel</span>
+          <span>Singleplayer</span>
+          <span>Mobiel</span>
+        </span>
+        <h2>Contraption Lab</h2>
+        <p>Bouw een machine met hellingen, bumpers en ventilatoren en breng de bal naar het doel.</p>
+        <span class="arcade-card-action">Start Contraption Lab <b aria-hidden="true">→</b></span>
+      </span>
+    </a>
+  `);
+}
+
 function showArcadeMenu() {
   if (!arcadeMenu) return;
 
@@ -49,6 +69,7 @@ function showGlitchRun() {
 }
 
 addMetroViceCard();
+addContraptionLabCard();
 playGlitchRun?.addEventListener('click', showGlitchRun);
 openArcadeMenu?.addEventListener('click', showArcadeMenu);
 
