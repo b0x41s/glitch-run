@@ -4,10 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
   <meta name="theme-color" content="#0d1821">
-  <title>Bomber Tribe v1.4.4</title>
-  <link rel="stylesheet" href="styles.css?v=1.4.4">
-  <link rel="stylesheet" href="arcade-link.css?v=1.4.4">
-  <link rel="stylesheet" href="ios-touch-guard.css?v=1.4.4">
+  <title>Bomber Tribe v1.4.5</title>
+  <link rel="stylesheet" href="styles.css?v=1.4.5">
+  <link rel="stylesheet" href="arcade-link.css?v=1.4.5">
+  <link rel="stylesheet" href="ios-touch-guard.css?v=1.4.5">
+  <link rel="stylesheet" href="mobile-joystick.css?v=1.4.5">
 </head>
 <body>
   <main class="app-shell">
@@ -60,11 +61,8 @@
     </section>
 
     <section class="mobile-controls" aria-label="Mobiele besturing">
-      <div class="dpad">
-        <button data-direction="up" aria-label="Omhoog">▲</button>
-        <button data-direction="left" aria-label="Links">◀</button>
-        <button data-direction="down" aria-label="Omlaag">▼</button>
-        <button data-direction="right" aria-label="Rechts">▶</button>
+      <div id="mobileJoystick" class="joystick" role="application" aria-label="Joystick om te lopen">
+        <div id="mobileJoystickKnob" class="joystick-knob" aria-hidden="true"></div>
       </div>
       <button id="mobileBombButton" class="bomb-button" type="button" aria-label="Plaats bom">💣</button>
     </section>
@@ -73,7 +71,7 @@
   <div id="startOverlay" class="overlay open">
     <div class="modal character-modal">
       <div class="modal-heading">
-        <span class="eyebrow">BOMBER TRIBE · VERSIE 1.4.4</span>
+        <span class="eyebrow">BOMBER TRIBE · VERSIE 1.4.5</span>
         <h1>Kies je character</h1>
         <p>Breek de kisten, verzamel upgrades en schakel de andere spelers uit.</p>
       </div>
@@ -142,13 +140,14 @@
     </div>
   </div>
 
-  <script src="ios-touch-guard.js?v=1.4.4"></script>
-  <script src="core.js?v=1.4.4"></script>
-  <script src="gameplay.js?v=1.4.4"></script>
-  <script src="ai-upgrade.js?v=1.4.4"></script>
-  <script src="ai-balance.js?v=1.4.4"></script>
-  <script src="ai-turning-fix.js?v=1.4.4"></script>
-  <script src="render.js?v=1.4.4"></script>
-  <script src="app.js?v=1.4.4"></script>
+  <script src="ios-touch-guard.js?v=1.4.5"></script>
+  <script src="core.js?v=1.4.5"></script>
+  <script src="gameplay.js?v=1.4.5"></script>
+  <script src="ai-upgrade.js?v=1.4.5"></script>
+  <script src="ai-balance.js?v=1.4.5"></script>
+  <script src="ai-turning-fix.js?v=1.4.5"></script>
+  <script src="render.js?v=1.4.5"></script>
+  <script src="app.js?v=1.4.5"></script>
+  <script src="mobile-joystick.js?v=1.4.5"></script>
 </body>
 </html>
