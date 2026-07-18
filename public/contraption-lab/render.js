@@ -5,6 +5,20 @@
   const ctx = canvas.getContext('2d');
   const colors = { bg:'#091219', grid:'rgba(216,219,226,.05)', text:'#d8dbe2', white:'#f7f6f6', green:'#39e072', purple:'#9e42e7', fan:'#57a8ff', bumper:'#ffbf5a' };
 
+  function roundedRectPath(x, y, width, height, radius) {
+    const r = Math.max(0, Math.min(radius, Math.abs(width) / 2, Math.abs(height) / 2));
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + width - r, y);
+    ctx.arcTo(x + width, y, x + width, y + r, r);
+    ctx.lineTo(x + width, y + height - r);
+    ctx.arcTo(x + width, y + height, x + width - r, y + height, r);
+    ctx.lineTo(x + r, y + height);
+    ctx.arcTo(x, y + height, x, y + height - r, r);
+    ctx.lineTo(x, y + r);
+    ctx.arcTo(x, y, x + r, y, r);
+    ctx.closePath();
+  }
+
   function drawGrid() {
     ctx.strokeStyle = colors.grid;
     ctx.lineWidth = 1;
@@ -20,7 +34,7 @@
     ctx.lineWidth = 4;
     ctx.setLineDash([10, 8]);
     ctx.beginPath();
-    ctx.roundRect(goal.x, goal.y, goal.w, goal.h, 14);
+    roundedRectPath(goal.x, goal.y, goal.w, goal.h, 14);
     ctx.fill();
     ctx.stroke();
     ctx.setLineDash([]);
@@ -88,7 +102,7 @@
     ctx.strokeStyle = colors.white;
     ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.roundRect(-34, -34, 68, 68, 14);
+    roundedRectPath(-34, -34, 68, 68, 14);
     ctx.fill();
     ctx.stroke();
     if (game.state.mode === 'run') ctx.rotate(time * 0.008);
@@ -102,15 +116,30 @@
     ctx.restore();
   }
 
-  function drawBall(item) {
+  function drawBall(item, time) {
     ctx.save();
+    if (game.state.mode === 'build') {
+      const pulse = 32 + Math.sin(time * 0.005) * 4;
+      ctx.strokeStyle = 'rgba(57,224,114,.32)';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(item.x, item.y, pulse, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(57,224,114,.8)';
+      ctx.font = '800 12px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillText('START', item.x, item.y - 38);
+    }
     const gradient = ctx.createRadialGradient(item.x - 6, item.y - 8, 3, item.x, item.y, item.r);
-    gradient.addColorStop(0, '#b4ffcc');
-    gradient.addColorStop(0.35, colors.green);
-    gradient.addColorStop(1, '#168d43');
+    gradient.addColorStop(0, '#e2ffeb');
+    gradient.addColorStop(0.28, '#75f49e');
+    gradient.addColorStop(0.62, colors.green);
+    gradient.addColorStop(1, '#137b3a');
     ctx.fillStyle = gradient;
+    ctx.shadowColor = 'rgba(57,224,114,.55)';
+    ctx.shadowBlur = 18;
     ctx.strokeStyle = colors.white;
-    ctx.lineWidth = item === game.state.selected ? 5 : 3;
+    ctx.lineWidth = item === game.state.selected ? 6 : 4;
     ctx.beginPath();
     ctx.arc(item.x, item.y, item.r, 0, Math.PI * 2);
     ctx.fill();
@@ -133,7 +162,7 @@
     ctx.moveTo(0, game.H - 28);
     ctx.lineTo(game.W, game.H - 28);
     ctx.stroke();
-    game.state.pieces.filter(item => item.type === 'ball').forEach(drawBall);
+    game.state.pieces.filter(item => item.type === 'ball').forEach(item => drawBall(item, time));
   }
 
   game.canvas = canvas;
