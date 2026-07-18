@@ -102,10 +102,25 @@ window.addEventListener('keydown', event => {
 }, { passive: false });
 
 window.addEventListener('keyup', event => keys.delete(event.key.toLowerCase()));
-window.addEventListener('blur', () => {
+
+const touchFirstDevice = window.matchMedia?.('(pointer: coarse)').matches || navigator.maxTouchPoints > 0;
+
+function clearActiveControls() {
   keys.clear();
   touchDirections.clear();
-  if (state === 'playing' && !paused) togglePause();
+}
+
+window.addEventListener('blur', () => {
+  clearActiveControls();
+
+  // iOS Safari geeft tijdens normale aanrakingen soms een blur-event.
+  // Op touch-apparaten pauzeren we daarom alleen als de pagina echt verborgen is.
+  if (!touchFirstDevice && state === 'playing' && !paused) togglePause();
+});
+
+document.addEventListener('visibilitychange', () => {
+  clearActiveControls();
+  if (document.hidden && state === 'playing' && !paused) togglePause();
 });
 
 document.querySelectorAll('.dpad button').forEach(button => {
