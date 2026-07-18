@@ -59,6 +59,7 @@
           <strong>Gebruik</strong>
           <p>Sleep gekleurde punten om wegen en water te verplaatsen. Sleep gebouwen en missiepunten rechtstreeks. Gebruik Punt toevoegen en tik daarna op de kaart om een nieuw punt in het dichtstbijzijnde segment te plaatsen.</p>
           <p>Opslaan bewaart de kaart op dit apparaat. Open daarna Test in game om hem direct te spelen.</p>
+          <p>De groene sportvelden en kades horen bij de standaardkaart en blijven behouden wanneer je de overige lagen opslaat.</p>
         </div>
       </aside>
 
@@ -70,6 +71,16 @@
   </main>
 
   <script src="./map-data.js"></script>
+  <script>
+    try {
+      const saved = JSON.parse(localStorage.getItem('metroViceMap') || 'null');
+      if (saved && saved.version !== window.METRO_VICE_DEFAULT_MAP.version) {
+        localStorage.removeItem('metroViceMap');
+      }
+    } catch (error) {
+      localStorage.removeItem('metroViceMap');
+    }
+  </script>
   <script src="./editor.js"></script>
 </body>
 </html>
