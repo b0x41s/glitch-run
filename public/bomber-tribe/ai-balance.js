@@ -1,6 +1,6 @@
 'use strict';
 
-// Bomber Tribe v1.4.0, actievere bots die alleen met een vluchtroute bombarderen.
+// Bomber Tribe v1.4.1, actievere bots die alleen met een vluchtroute bombarderen.
 characters[1].name = 'Laurens';
 characters[2].name = 'Lisette';
 characters[3].name = 'Tamara';
@@ -11,7 +11,7 @@ startGame = function startBalancedRound() {
   previousBalancedStartGame();
 
   for (const bot of entities.slice(1)) {
-    bot.aiBombTimer = randomRange(0.9, 1.6);
+    bot.aiBombTimer = randomRange(0.75, 1.35);
     bot.aiRepathTimer = 0;
     bot.escapeBomb = null;
     bot.escapePath = [];
@@ -23,7 +23,7 @@ startGame = function startBalancedRound() {
 
 updateBot = function updateActiveSafeBot(bot, dt) {
   if (!Array.isArray(bot.escapePath)) bot.escapePath = [];
-  if (!Number.isFinite(bot.aiBombTimer)) bot.aiBombTimer = randomRange(0.9, 1.6);
+  if (!Number.isFinite(bot.aiBombTimer)) bot.aiBombTimer = randomRange(0.75, 1.35);
   if (!Number.isFinite(bot.aiRepathTimer)) bot.aiRepathTimer = 0;
   if (!Object.prototype.hasOwnProperty.call(bot, 'escapeBomb')) bot.escapeBomb = null;
 
@@ -38,8 +38,8 @@ updateBot = function updateActiveSafeBot(bot, dt) {
     bot.escapeBomb = null;
     bot.escapePath = [];
     bot.target = null;
-    bot.bombCooldown = Math.max(bot.bombCooldown, 0.55);
-    bot.aiBombTimer = Math.max(bot.aiBombTimer, randomRange(0.75, 1.25));
+    bot.bombCooldown = Math.max(bot.bombCooldown, 0.45);
+    bot.aiBombTimer = Math.max(bot.aiBombTimer, randomRange(0.55, 0.95));
   }
 
   if (bot.target && distanceToTile(bot, bot.target) < 0.1) {
@@ -90,35 +90,35 @@ updateBot = function updateActiveSafeBot(bot, dt) {
     Math.abs(Math.floor(other.x) - tx) + Math.abs(Math.floor(other.y) - ty) <= 2
   );
 
-  bot.aiBombTimer = randomRange(0.6, 1.05);
+  bot.aiBombTimer = randomRange(0.45, 0.85);
   if (!adjacentCrate && !opponentInLine && !nearbyOpponent) return;
 
   const difficulty = difficultySelect.value;
-  const bombChance = difficulty === 'easy' ? 0.48 : difficulty === 'hard' ? 0.82 : 0.68;
-  const tacticalBonus = opponentInLine ? 0.12 : nearbyOpponent ? 0.06 : 0;
-  if (Math.random() >= Math.min(0.92, bombChance + tacticalBonus)) return;
+  const bombChance = difficulty === 'easy' ? 0.58 : difficulty === 'hard' ? 0.9 : 0.78;
+  const tacticalBonus = opponentInLine ? 0.08 : nearbyOpponent ? 0.04 : 0;
+  if (Math.random() >= Math.min(0.96, bombChance + tacticalBonus)) return;
 
   const virtualBomb = {
     x: tx,
     y: ty,
-    timer: 2.65,
+    timer: 2.7,
     range: bot.flame,
     owner: bot,
     passIds: new Set([bot.id])
   };
 
-  const route = findSafeRoute(bot, tx, ty, virtualBomb, true);
-  if (!route.length || !routeEndsSafely(bot, route, virtualBomb)) return;
+  const route = findBombEscapeRoute(bot, tx, ty, virtualBomb);
+  if (!route.length) return;
 
   const bomb = placeBomb(bot);
   if (!bomb) return;
-  bomb.timer = 2.65;
+  bomb.timer = 2.7;
 
   bot.escapeBomb = bomb;
   bot.escapePath = route;
   bot.target = route[0];
-  bot.aiRepathTimer = 0.06;
-  bot.bombCooldown = 1.0;
+  bot.aiRepathTimer = 0.05;
+  bot.bombCooldown = 0.9;
 };
 
 function chooseActiveRoamTarget(bot, tx, ty) {
@@ -145,18 +145,46 @@ function chooseActiveRoamTarget(bot, tx, ty) {
   return options[Math.floor(Math.random() * Math.min(2, options.length))];
 }
 
-function routeEndsSafely(bot, route, bomb) {
-  const blast = getBlastCells(bomb, true);
-  let elapsed = 0;
+function findBombEscapeRoute(bot, startX, startY, bomb) {
+  const blastKeys = new Set(getBlastCells(bomb, true).map(cell => `${cell.x},${cell.y}`));
+  const queue = [{ x: startX, y: startY, path: [], elapsed: 0 }];
+  const visited = new Set([`${startX},${startY}`]);
 
-  for (const cell of route) {
-    elapsed += 1 / Math.max(1, bot.speed);
-    if (dangerousOnArrival(cell.x, cell.y, elapsed, bomb)) return false;
+  while (queue.length) {
+    const node = queue.shift();
+    const outsideBlast = !blastKeys.has(`${node.x},${node.y}`);
+    const exits = countPlanningExits(node.x, node.y, bot, startX, startY, bomb);
+
+    if (
+      node.path.length &&
+      outsideBlast &&
+      exits > 0 &&
+      node.elapsed < bomb.timer - 0.3 &&
+      !dangerousOnArrival(node.x, node.y, node.elapsed, bomb)
+    ) {
+      return node.path;
+    }
+
+    if (node.path.length >= 8) continue;
+
+    for (const [nx, ny] of neighbors(node.x, node.y)) {
+      const key = `${nx},${ny}`;
+      if (visited.has(key)) continue;
+      if (!planningCellOpen(nx, ny, bot, startX, startY, bomb)) continue;
+
+      const elapsed = node.elapsed + 1 / Math.max(1, bot.speed);
+      if (elapsed >= bomb.timer - 0.22) continue;
+      if (dangerousOnArrival(nx, ny, elapsed, bomb)) continue;
+
+      visited.add(key);
+      queue.push({
+        x: nx,
+        y: ny,
+        elapsed,
+        path: [...node.path, { x: nx, y: ny }]
+      });
+    }
   }
 
-  const destination = route[route.length - 1];
-  const outsideBlast = !blast.some(cell => cell.x === destination.x && cell.y === destination.y);
-  const hasExit = countPlanningExits(destination.x, destination.y, bot, bomb.x, bomb.y, bomb) > 0;
-
-  return outsideBlast && hasExit && elapsed < bomb.timer - 0.28;
+  return [];
 }
