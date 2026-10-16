@@ -10,6 +10,8 @@
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
   let selected='alpine',mode='timed',perk='none',graphics='diorama',busy=false,modal='',shownPhase='',generation=0,lastAnnouncement=Infinity,awarded=0,finished=false,newBadges=[];
   let dailyDay=new Date().toISOString().slice(0,10),freeStart=selected,lastCount=0;
+  let arcadeScoreRun=null;
+  const scoreVariant=()=>game.mode==='daily'?`daily-${game.dailyDate}-${graphics}`:`${game.mode}-${game.perk}-${graphics}`;
   const storage={get(key,fallback){try{return localStorage.getItem(key)??fallback;}catch{return fallback;}},set(key,value){try{localStorage.setItem(key,String(value));return true;}catch{return false;}},remove(key){try{localStorage.removeItem(key);}catch{}}};
   const game=new Expedition({history:storage.get('wd-layout-history-v1','{}')});
   function savedCampaign(){
@@ -18,12 +20,12 @@
   function resumeMenu(){const saved=savedCampaign();$('#btnContinue').hidden=!saved;if(saved){const b=BIOMES.find(b=>b.id===saved.run.order[saved.run.index]);$('#resumeSummary').textContent=`${MODES[saved.run.mode].name} · ${b.name} · wereld ${saved.run.index+1}/7 · ${saved.run.score} punten`;}}
   function saveCampaign(){
     storage.set('wd-layout-history-v1',game.historyJSON());
-    const run=game.snapshot();if(run){const ok=storage.set('wd-expedition-v1',JSON.stringify({version:1,graphics,run}));resumeMenu();return ok;}
+    const run=game.snapshot();if(run){const ok=storage.set('wd-expedition-v1',JSON.stringify({version:1,graphics,run,scoreRun:arcadeScoreRun?.snapshot()||null}));resumeMenu();return ok;}
     if(['victory','gameover'].includes(game.phase)){storage.remove('wd-expedition-v1');resumeMenu();}return false;
   }
   function continueCampaign(){
     if(busy)return;const saved=savedCampaign();if(!saved){resumeMenu();return;}graphics=saved.graphics;mode=saved.run.mode;perk=saved.run.perk;selected=saved.run.order[0];dailyDay=saved.run.dailyDate||new Date().toISOString().slice(0,10);document.documentElement.dataset.graphics=graphics;document.querySelectorAll('.graphics-button').forEach(b=>{b.classList.toggle('selected',b.dataset.graphics===graphics);b.setAttribute('aria-pressed',String(b.dataset.graphics===graphics));});document.querySelectorAll('.mode-button').forEach(b=>{b.classList.toggle('selected',b.dataset.mode===mode);b.setAttribute('aria-pressed',String(b.dataset.mode===mode));});
-    loading(()=>{if(!game.restore(saved.run))return;awarded=game.results.length;finished=false;newBadges=[];},saved.run.order[saved.run.index],true);
+    loading(()=>{if(!game.restore(saved.run))return;const candidate=window.ArcadeScores?.restoreRun(saved.scoreRun);arcadeScoreRun=candidate?.game==='biomes'&&candidate.character===scoreVariant()?candidate:window.ArcadeScores?.beginLocalRun('biomes',scoreVariant());awarded=game.results.length;finished=false;newBadges=[];},saved.run.order[saved.run.index],true);
   }
   const career=Career.parse(storage.get('wd-career-v1','{}'));
   const recordKey=()=>mode==='daily'?`wd-best-v2-daily-${dailyDay}-${graphics}`:`wd-best-v2-${mode}-${perk}-${graphics}`;
@@ -171,7 +173,7 @@
     try{if(graphics==='diorama')await Promise.all([...BIOMES.map(b=>loadImage(`assets/biomes/${b.id}.webp`)),loadImage('assets/biomes/ocean-live.webp'),loadImage('assets/biomes/harvest-live.webp'),loadImage('assets/shark.webp'),loadImage('assets/diorama-props.webp'),loadImage('assets/wildlife-props.webp')]);action();if((document.hidden||!document.hasFocus())&&['playing','countdown','ready'].includes(game.phase))game.pause();closeDialog();enterWorld();if(game.phase!=='playing'){shownPhase=game.phase;showDialog(game.phase==='paused'?'pause':game.phase);}saveCampaign();pendingLoad=null;}
     catch{showDialog('error');}finally{busy=false;$('#loadingScreen').hidden=true;}
   }
-  function start(){if(mode==='daily'){dailyDay=new Date().toISOString().slice(0,10);selectWorld(dailyMission(dailyDay).first);menuBest();}loading(()=>{awarded=0;finished=false;newBadges=[];game.start(selected,mode,perk,dailyDay,graphics);game.beginStartCountdown();},selected);}
+  function start(){if(mode==='daily'){dailyDay=new Date().toISOString().slice(0,10);selectWorld(dailyMission(dailyDay).first);menuBest();}loading(()=>{awarded=0;finished=false;newBadges=[];game.start(selected,mode,perk,dailyDay,graphics);arcadeScoreRun=window.ArcadeScores?.beginRun('biomes',scoreVariant());game.beginStartCountdown();},selected);}
   function next(){const id=game.order[game.index+1];if(game.phase==='cleared'&&id)loading(()=>game.next(),id);}
   function home(){
     saveCampaign();game.reset();if(mode==='daily'){dailyDay=new Date().toISOString().slice(0,10);selectWorld(dailyMission(dailyDay).first);}sound.setPaused(false);shownPhase='';generation++;closeDialog();$('#play').hidden=true;$('#menu').hidden=false;menuBest();$('#btnStart').focus({preventScroll:true});window.scrollTo(0,0);
@@ -236,6 +238,7 @@
     if(kind==='error')content=dialogContent({symbol:'cross',label:'WERELD NIET GELADEN',title:'Nog even geduld.',text:'Een afbeelding kon niet worden geladen. Open de volledige gamemap, inclusief de map assets, en probeer opnieuw.',buttons:(pendingLoad?.restoring?'':button('fallback','Open de klassieke wereld'))+button('error-close','Terug',false)});
     const overlay=$('#overlay');overlay.classList.toggle('menu-dialog',['career','loadout','how'].includes(kind));overlay.classList.toggle('countdown-dialog',kind==='countdown');
     $('#overlayBody').innerHTML=content;if(!overlay.open)overlay.showModal();
+    if(['victory','gameover'].includes(kind)&&arcadeScoreRun){void arcadeScoreRun.finish(game.score);window.ArcadeScores.mountStatus($('#overlayBody .dialog-content'),arcadeScoreRun);}
     // Native dialog autofocus otherwise jumps to a button below a long atlas.
     const initialFocus=kind==='countdown'?overlay.querySelector('.dialog-actions button'):$('#overlayTitle');
     initialFocus.focus({preventScroll:true});overlay.scrollTop=0;
@@ -278,10 +281,10 @@
     if(action==='back')showDialog(game.phase==='paused'?'pause':game.phase);
     if(action==='home')home();
     if(action==='next')next();
-    if(action==='retry')loading(()=>{awarded=0;finished=false;newBadges=[];game.retry();game.beginStartCountdown();},game.order[0]);
+    if(action==='retry')loading(()=>{awarded=0;finished=false;newBadges=[];game.retry();arcadeScoreRun=window.ArcadeScores?.beginRun('biomes',scoreVariant());game.beginStartCountdown();},game.order[0]);
     if(action==='relaxed'){
       // Continue this world without losing earned points or completed worlds.
-      if(!game.continueRelaxed())return;$('#nightShade').hidden=true;$('#worldStage').classList.remove('night-watch');shownPhase='playing';closeDialog();hud();say('Vrij verkennen: neem rustig de tijd om de laatste buitenbeentjes te vinden.');saveCampaign();
+      if(!game.continueRelaxed())return;arcadeScoreRun=window.ArcadeScores?.beginLocalRun('biomes',scoreVariant());$('#nightShade').hidden=true;$('#worldStage').classList.remove('night-watch');shownPhase='playing';closeDialog();hud();say('Vrij verkennen: neem rustig de tijd om de laatste buitenbeentjes te vinden.');saveCampaign();
     }
     if(action==='fallback'){graphics='classic';document.documentElement.dataset.graphics=graphics;const pending=pendingLoad;closeDialog();if(pending)loading(pending.action,pending.id);else home();}
     if(action==='error-close'){closeDialog();if(game.phase==='menu')$('#btnStart').focus();else showDialog(game.phase==='cleared'?'cleared':'pause');}

@@ -62,9 +62,9 @@ function fadeTo(target, duration = 500) {
   const startedAt = performance.now();
 
   const step = (now) => {
-    const progress = Math.min(1, (now - startedAt) / duration);
+    const progress = Math.max(0, Math.min(1, (now - startedAt) / duration));
     const eased = 1 - Math.pow(1 - progress, 3);
-    themeMusic.volume = startVolume + (target - startVolume) * eased;
+    themeMusic.volume = Math.max(0, Math.min(1, startVolume + (target - startVolume) * eased));
     if (progress < 1) fadeFrame = requestAnimationFrame(step);
   };
 

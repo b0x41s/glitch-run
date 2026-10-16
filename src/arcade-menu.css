@@ -341,3 +341,4 @@
 .world-debugger .arcade-card-visual{inset:-20px -25px auto auto;width:65%;height:85%;opacity:.48}
 .world-debugger .arcade-card-visual img{width:100%;height:100%;object-fit:contain}
 .world-debugger .arcade-card-action{color:#cfe7b0}
+.arcade-scores-link{display:inline-flex;align-items:center;gap:14px;padding:12px 18px;border:1px solid #b98be066;border-radius:10px;background:#9e42e715;color:#ecddff;font-size:13px;font-weight:700;text-decoration:none}.arcade-scores-link:hover{background:#9e42e72b}.arcade-scores-link:focus-visible{outline:3px solid #67d7ff;outline-offset:4px}@media(max-width:480px){.arcade-scores-link{font-size:11px;padding:10px 12px}}

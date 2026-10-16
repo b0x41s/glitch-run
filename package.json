@@ -5,8 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "build": "vite build && rm -rf dist/bomber-tribe dist/metro-vice-96 dist/contraption-lab && cp -R public/bomber-tribe dist/bomber-tribe && cp -R public/metro-vice-96 dist/metro-vice-96 && cp -R public/contraption-lab dist/contraption-lab && test -f dist/bomber-tribe/index.html && test -f dist/metro-vice-96/index.html && test -f dist/contraption-lab/index.html && test -f dist/world-debugger/index.html",
-    "preview": "vite preview --host 127.0.0.1"
+    "build": "node tools/sync-static.mjs && vite build && rm -rf dist/bomber-tribe dist/metro-vice-96 dist/contraption-lab && cp -R public/bomber-tribe dist/bomber-tribe && cp -R public/metro-vice-96 dist/metro-vice-96 && cp -R public/contraption-lab dist/contraption-lab && test -f dist/bomber-tribe/index.html && test -f dist/metro-vice-96/index.html && test -f dist/contraption-lab/index.html && test -f dist/world-debugger/index.html && test -f dist/scores/index.html && test -f dist/shared/score-client.js",
+    "preview": "vite preview --host 127.0.0.1",
+    "predev": "node tools/sync-static.mjs",
+    "test": "node --test tests/*.test.cjs",
+    "test:browser": "node tests/arcade-browser.cjs"
   },
   "dependencies": {
     "three": "0.170.0"

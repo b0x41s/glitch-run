@@ -492,6 +492,7 @@ let nextSegmentZ = 12;
 let segmentIndex = 0;
 let distance = 0;
 let score = 0;
+let arcadeScoreRun = null;
 let shards = 0;
 let integrity = MAX_INTEGRITY;
 let pressure = 8;
@@ -723,6 +724,7 @@ async function startRun() {
   await audio.unlock();
   audio.ui(740);
   resetRun();
+  arcadeScoreRun = globalThis.ArcadeScores?.beginRun('glitch-run', selectedCharacterId);
   selectionScreen.classList.add('closed');
   gameOverScreen.classList.add('hidden');
   pauseScreen.classList.add('hidden');
@@ -1090,6 +1092,10 @@ function endRun(reason) {
     writeBestScore(bestScore);
   }
   resultScoreEl.textContent = score.toLocaleString('nl-NL');
+  if (arcadeScoreRun) {
+    void arcadeScoreRun.finish(score);
+    globalThis.ArcadeScores.mountStatus(gameOverScreen.querySelector('.overlay-panel'), arcadeScoreRun);
+  }
   resultDistanceEl.textContent = Math.floor(distance).toLocaleString('nl-NL');
   resultShardsEl.textContent = shards.toString();
   resultBestEl.textContent = bestScore.toLocaleString('nl-NL');

@@ -24,9 +24,10 @@
 
   const defaultMap=window.METRO_VICE_DEFAULT_MAP;
   let activeMap=JSON.parse(JSON.stringify(defaultMap));
+  let customMap=false,arcadeScoreRun=null;
   try{
     const saved=JSON.parse(localStorage.getItem('metroViceMap')||'null');
-    if(saved&&saved.W&&saved.H&&saved.version===defaultMap.version)activeMap=saved;
+    if(saved&&saved.W&&saved.H&&saved.version===defaultMap.version){activeMap=saved;customMap=true;}
   }catch(error){
     console.warn('Opgeslagen kaart kon niet worden geladen',error);
   }
@@ -189,7 +190,9 @@
   }
 
   function finishRun(title,text){
+    if(!running)return;
     running=false;
+    if(arcadeScoreRun){void arcadeScoreRun.finish(Math.max(0,Math.floor(player.cash)));window.ArcadeScores.mountStatus(root.querySelector('.panel'),arcadeScoreRun);}
     ui.menu.hidden=false;
     root.classList.add('menu-open');
     root.querySelector('h2').innerHTML=title;
@@ -237,6 +240,7 @@
   }
 
   function reset(){
+    arcadeScoreRun=window.ArcadeScores?.beginRun('metro-vice-96',customMap?'custom-map':'driver');
     Object.assign(player,{
       x:spawnPoint[0],y:spawnPoint[1],a:spawnPoint[2]||0,v:0,hp:100,cash:0,heat:0,wanted:0,hitUntil:0
     });

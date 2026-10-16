@@ -92,6 +92,7 @@ let state = 'menu';
 let paused = false;
 let soundEnabled = true;
 let score = 0;
+let arcadeScoreRun = null;
 let timeLeft = ROUND_TIME;
 let lastTime = performance.now();
 let bannerTimer = 0;
@@ -203,6 +204,7 @@ function makeEntity(id, characterIndex, tx, ty, human = false) {
 
 function startGame() {
   ensureAudio();
+  arcadeScoreRun = window.ArcadeScores?.beginRun('bomber-tribe', characters[selectedCharacter].name.toLowerCase() + '-' + difficultySelect.value);
   roundDifficulty = difficulties[difficultySelect.value] || difficulties.normal;
   createBoard();
   bombs = [];
@@ -247,6 +249,11 @@ function endGame(won, reason = '') {
   persisted.highscores[selectedCharacter] = Math.max(persisted.highscores[selectedCharacter] || 0, score);
   if (won) persisted.wins += 1;
   savePersisted();
+
+  if (arcadeScoreRun) {
+    void arcadeScoreRun.finish(score);
+    window.ArcadeScores.mountStatus(ui.resultTitle.closest('.modal'), arcadeScoreRun);
+  }
 
   ui.resultIcon.textContent = won ? '🏆' : '💥';
   ui.resultTitle.textContent = won ? 'Arena veroverd' : 'Uitgeschakeld';

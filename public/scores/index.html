@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0d1821"><meta name="description" content="De scorekamer van Tex Arcade. Bekijk echte leaderboards, characterrecords en je eigen scores.">
+  <title>Scores · Tex Arcade</title>
+  <link rel="stylesheet" href="./scores.css?v=1">
+  <script defer src="../shared/arcade-config.js?v=1"></script>
+  <script defer src="../shared/score-client.js?v=1"></script>
+  <script defer src="./scores.js?v=1"></script>
+</head>
+<body>
+  <div class="score-room">
+    <header class="room-nav"><a class="arcade-brand" href="../"><span class="brand-mark">TX</span><strong>Tex Arcade</strong></a><a class="back-link" href="../">Terug naar de games <span aria-hidden="true">↗</span></a></header>
+    <main>
+      <div class="room-intro"><div><p class="room-label">De scorekamer</p><h1>Jouw plek in<br>de arcade.</h1><p>Vijf games. Jouw records. Een nieuwe ronde om ze te verbreken.</p></div><div class="intro-stamp" aria-hidden="true">PLAY<br>REPEAT.</div></div>
+      <nav id="gameFilters" class="game-filters" aria-label="Kies een game"></nav>
+      <div class="room-layout">
+        <div class="boards">
+          <section class="leaderboard" aria-labelledby="boardTitle">
+            <div class="board-heading"><div><p class="room-label">Leaderboard</p><h2 id="boardTitle">Glitch Run</h2><p id="gameMetric"></p></div><a id="playGame" class="play-link" href="../#glitch-run">Spelen <span aria-hidden="true">↗</span></a></div>
+            <div class="board-controls"><div id="periodFilters" class="period-filters" role="group" aria-label="Periode"><button data-period="all" aria-pressed="true">All-time</button><button data-period="week" aria-pressed="false">Deze week</button><button data-period="month" aria-pressed="false">Deze maand</button></div><label class="character-filter">Personage / variant<select id="characterFilter"><option value="">Alle personages / varianten</option></select></label></div>
+            <div class="connection-line"><span id="connectionStatus" role="status">Online scores controleren…</span><button id="refreshScores" class="quiet-button">Vernieuwen <span aria-hidden="true">↻</span></button></div>
+            <div class="rank-table-wrap" id="boardResults" aria-live="polite" aria-busy="true"><p class="empty-state">Scores laden…</p></div>
+            <p class="board-note">Alleen door de server bevestigde scores. Week en maand volgen de UTC-kalender; de week begint op maandag.</p>
+          </section>
+          <section class="character-section" aria-labelledby="characterTitle"><div class="section-heading"><h2 id="characterTitle">Records per personage / variant</h2><span id="recordPeriod">All-time</span></div><div id="characterRecords"><p class="subtle">Nog geen gegevens geladen.</p></div></section>
+        </div>
+        <aside class="player-panel" aria-label="Account en persoonlijke records">
+          <section class="account-section" aria-labelledby="accountTitle"><div class="account-heading"><span class="player-mark" aria-hidden="true">↗</span><div><p class="room-label">Jouw speler</p><h2 id="accountTitle">Neem je records mee.</h2></div></div>
+            <p id="accountIntro">Log in op elk apparaat met hetzelfde account. Je games blijven ook zonder account speelbaar.</p>
+            <div id="signedIn" hidden><strong id="playerName"></strong><button id="logout" class="quiet-button">Uitloggen</button><p class="subtle">Je online records horen bij dit account.</p></div>
+            <div id="authArea"><div class="auth-tabs" role="group" aria-label="Accountactie"><button id="loginMode" aria-pressed="true">Inloggen</button><button id="registerMode" aria-pressed="false">Account maken</button></div>
+              <form id="accountForm"><label>Spelersnaam<input id="username" name="username" autocomplete="username" minlength="3" maxlength="20" pattern="[A-Za-z0-9_\-]{3,20}" required placeholder="Jouw spelersnaam"></label><label>Wachtwoord<input id="password" name="password" type="password" autocomplete="current-password" minlength="10" maxlength="128" required placeholder="Minimaal 10 tekens"></label><p class="input-help">Spelersnaam: 3–20 letters, cijfers, _ of -.</p><button id="authSubmit" class="primary-button" type="submit">Inloggen</button></form>
+            </div><p id="authMessage" role="status" class="form-message"></p>
+          </section>
+          <section class="personal-section" aria-labelledby="personalTitle"><div class="section-heading"><h2 id="personalTitle">Jouw accountrecords</h2><span class="personal-period">All-time</span></div><div id="personalRecords"><p class="subtle">Log in om je scores van alle apparaten te zien.</p></div></section>
+          <section class="device-section" aria-labelledby="deviceTitle"><div class="section-heading"><h2 id="deviceTitle">Op dit apparaat</h2><span class="personal-period">All-time</span></div><div id="deviceRecords"></div><p class="subtle">Lokale records staan apart van het online leaderboard. Oudere records zonder speeldatum verschijnen alleen bij All-time.</p><div id="pendingArea" hidden><p id="pendingMessage"></p><button id="retryPending" class="quiet-button">Opnieuw synchroniseren</button></div></section>
+        </aside>
+      </div>
+    </main>
+    <footer class="room-footer"><a href="../">Een nieuwe ronde begint in de arcade.</a><span>Echte runs. Eigen records.</span></footer>
+  </div>
+</body>
+</html>

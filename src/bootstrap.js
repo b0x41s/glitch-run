@@ -7,6 +7,9 @@ if (!response.ok) {
 }
 
 let source = await response.text();
+// Vite serves public assets at the site root. Source-based Pages hosting
+// retains the public/ directory. The existing loader must support both.
+const assetPrefix = import.meta.env ? '' : 'public/';
 
 function replaceFunction(functionName, nextFunctionName, replacement) {
   const start = source.indexOf(`function ${functionName}`);
@@ -32,7 +35,7 @@ replaceFunction(
     ? window.location.pathname
     : window.location.pathname.replace(/\\/[^/]*$/, '/');
   const cleanPath = String(path).replace(/^\\.?\\//, '');
-  return window.location.origin + pagePath + 'public/' + cleanPath;
+  return window.location.origin + pagePath + '${assetPrefix}' + cleanPath;
 }`
 );
 

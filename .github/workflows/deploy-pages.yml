@@ -34,6 +34,9 @@ jobs:
       - name: Build game
         run: npm run build
 
+      - name: Run score and audio regression tests
+        run: npm test
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 

@@ -1,0 +1,101 @@
+--- a/app/main.py
++++ b/app/main.py
+@@ -218,7 +218,9 @@
+         if (await cur.fetchone())["n"] >= settings.MAX_REJECTED_PER_DAY:
+             raise HTTPException(403, "Score submission temporarily disabled for this account")
+         await conn.execute("""UPDATE runs SET status = 'abandoned' WHERE user_id = %s AND game_id = %s
+-                              AND status = 'started'""", (user["id"], game_id))
++                              AND status = 'started'
++                              AND started_at < clock_timestamp() - make_interval(secs => %s)""",
++                           (user["id"], game_id, game["max_duration"]))
+         secret = secrets.token_hex(32)
+         cur = await conn.execute(
+             """INSERT INTO runs (user_id, game_id, character, secret) VALUES (%s, %s, %s, %s)
+@@ -239,6 +241,10 @@
+                    FROM runs r JOIN games g ON g.id = r.game_id
+                    WHERE r.id = %s AND r.user_id = %s FOR UPDATE OF r""", (run_id, user["id"]))
+             run = await cur.fetchone()
++            if run and run["status"] == "accepted" and run["score"] == body.score and security.proof_valid(run["secret"], str(run_id), body.score, body.proof):
++                # A lost response can safely be retried without inserting a
++                # second score or counting a legitimate retry as a rejection.
++                return {"status": "accepted", "score": body.score, "game": run["game_id"], "character": run["character"]}
+             if not run or run["status"] != "started":
+                 raise HTTPException(404, "Run not found or already finished")
+ 
+@@ -316,11 +322,14 @@
+ 
+ 
+ @app.get("/v1/me/scores")
+-async def my_scores(user: CurrentUser, game: Annotated[str | None, Query(pattern=GAME_RE.pattern)] = None):
++async def my_scores(user: CurrentUser, game: Annotated[str | None, Query(pattern=GAME_RE.pattern)] = None,
++                    period: Literal["all", "month", "week"] = "all"):
++    since = PERIOD_START[period]
+     async with db.pool.connection() as conn:
+         cur = await conn.execute(
+-            """SELECT game_id, character, max(score) AS best, count(*) AS runs
++            f"""SELECT game_id, character, max(score) AS best, count(*) AS runs
+                FROM runs WHERE user_id = %s AND status = 'accepted' AND (%s::text IS NULL OR game_id = %s)
++                 AND finished_at >= COALESCE({since}, '-infinity'::timestamptz)
+                GROUP BY game_id, character ORDER BY game_id, character""", (user["id"], game, game))
+         return await cur.fetchall()
+ 
+--- a/app/games.json
++++ b/app/games.json
+@@ -1,6 +1,7 @@
+ [
+   {"id": "glitch-run",      "name": "Glitch Run",      "max_score": 10000000, "max_score_per_second": 1000, "burst": 500,  "min_duration": 3, "max_duration": 14400},
+   {"id": "bomber-tribe",    "name": "Bomber Tribe",    "max_score": 1000000,  "max_score_per_second": 250,  "burst": 500,  "min_duration": 5, "max_duration": 7200},
+-  {"id": "contraption-lab", "name": "Contraption Lab", "max_score": 1000000,  "max_score_per_second": 500,  "burst": 500,  "min_duration": 5, "max_duration": 14400},
+-  {"id": "metro-vice-96",   "name": "Metro Vice 96",   "max_score": 10000000, "max_score_per_second": 1000, "burst": 500,  "min_duration": 5, "max_duration": 14400}
++  {"id": "contraption-lab", "name": "Contraption Lab", "max_score": 1000000,  "max_score_per_second": 500,  "burst": 1000,  "min_duration": 0, "max_duration": 14400},
++  {"id": "metro-vice-96",   "name": "Metro Vice 96",   "max_score": 10000000, "max_score_per_second": 1000, "burst": 500,  "min_duration": 5, "max_duration": 14400},
++  {"id": "biomes", "name": "Biomes", "max_score": 100000, "max_score_per_second": 1000, "burst": 500, "min_duration": 3, "max_duration": 14400}
+ ]
+--- a/tests/test_api.py
++++ b/tests/test_api.py
+@@ -119,7 +119,10 @@
+     body = {"score": 5, "proof": proof(run["secret"], run["run_id"], 5)}
+     assert client.post(f"/v1/runs/{run['run_id']}/finish", json=body, headers=b).status_code == 404
+     assert client.post(f"/v1/runs/{run['run_id']}/finish", json=body, headers=a).status_code == 200
+-    assert client.post(f"/v1/runs/{run['run_id']}/finish", json=body, headers=a).status_code == 404
++    assert client.post(f"/v1/runs/{run['run_id']}/finish", json=body, headers=a).status_code == 200
++    assert client.get('/v1/me/scores', headers=a).json()[0]['runs'] == 1
++    changed = {"score": 6, "proof": proof(run["secret"], run["run_id"], 6)}
++    assert client.post(f"/v1/runs/{run['run_id']}/finish", json=changed, headers=a).status_code == 404
+ 
+ 
+ def test_min_duration(client):
+@@ -144,3 +147,33 @@
+     assert client.request("DELETE", "/v1/me", json={"password": "wrong-wrong-1"}, headers=h).status_code == 403
+     assert client.request("DELETE", "/v1/me", json={"password": PW}, headers=h).status_code == 204
+     assert client.get("/v1/me", headers=h).status_code == 401
++
++
++def test_biomes_registration_and_signed_score(client):
++    h = register(client)
++    assert any(g['id'] == 'biomes' for g in client.get('/v1/games').json())
++    assert play(client, h, 100, game='biomes', character='timed-none-diorama').status_code == 200
++    assert client.get('/v1/games/biomes/leaderboard').json()['entries'][0]['score'] == 100
++
++
++def test_personal_calendar_periods(client):
++    import psycopg
++    h = register(client)
++    assert play(client, h, 100).status_code == 200
++    with psycopg.connect(settings.DATABASE_URL, autocommit=True) as conn:
++        conn.execute("UPDATE runs SET finished_at = now() - interval '40 days'")
++    assert client.get('/v1/me/scores?period=all', headers=h).json()[0]['best'] == 100
++    assert client.get('/v1/me/scores?period=week', headers=h).json() == []
++    assert client.get('/v1/me/scores?period=month', headers=h).json() == []
++    assert client.get('/v1/me/scores?period=year', headers=h).status_code == 422
++
++
++def test_pending_and_concurrent_runs_keep_their_original_identity(client):
++    h = register(client)
++    first = client.post('/v1/games/biomes/runs', json={'character': 'timed-none-diorama'}, headers=h).json()
++    second = client.post('/v1/games/biomes/runs', json={'character': 'sprint-none-diorama'}, headers=h).json()
++    for run in (first, second):
++        body = {'score': 100, 'proof': proof(run['secret'], run['run_id'], 100)}
++        assert client.post(f"/v1/runs/{run['run_id']}/finish", json=body, headers=h).status_code == 200
++    rows = client.get('/v1/me/scores?game=biomes', headers=h).json()
++    assert len(rows) == 2 and sum(r['runs'] for r in rows) == 2

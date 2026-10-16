@@ -51,9 +51,9 @@ function addWorldDebuggerCard() {
       <span class="arcade-card-visual" aria-hidden="true"><img src="./world-debugger/assets/biomes/alpine.webp" alt="" loading="lazy" decoding="async"></span>
       <span class="arcade-card-content">
         <span class="arcade-card-meta"><span>Zoekavontuur</span><span>Singleplayer</span><span>Mobiel</span></span>
-        <h2>World Debugger</h2>
-        <p>Zoek de buitenbeentjes in zeven levende biomen. Speel tegen de klok, kies je perk en verdien medailles.</p>
-        <span class="arcade-card-action">Start World Debugger <b aria-hidden="true">→</b></span>
+        <h2>Biomes</h2>
+        <p>World Debugger: zoek de buitenbeentjes in zeven levende biomen. Speel tegen de klok, kies je perk en verdien medailles.</p>
+        <span class="arcade-card-action">Start Biomes <b aria-hidden="true">→</b></span>
       </span>
     </a>
   `);

@@ -9,6 +9,7 @@
   var run = document.querySelector('#run');
   var toolButtons = Array.prototype.slice.call(document.querySelectorAll('[data-tool]'));
   var lastTime = performance.now();
+  var simulationSeconds = 0, scoreSubmitted = false, arcadeScoreRun = null;
 
   function ensureBall() {
     var ball = null;
@@ -39,6 +40,9 @@
     updateTools();
     ensureBall();
     if (mode === 'run') {
+      simulationSeconds = 0; scoreSubmitted = false;
+      arcadeScoreRun = window.ArcadeScores?.beginRun('contraption-lab', 'builder');
+      document.querySelector('.arcade-score-status')?.remove();
       state.snapshot = game.clone(state.pieces);
       state.won = false;
       run.textContent = 'Stop';
@@ -144,9 +148,16 @@
     lastTime = time;
     ensureBall();
     if (state.mode === 'run') {
+      simulationSeconds += delta;
       for (var substep = 0; substep < 3; substep += 1) game.step(delta / 3);
       if (state.won) {
-        status.textContent = 'Doel gehaald!';
+        if (!scoreSubmitted) {
+          scoreSubmitted = true;
+          var pieces = state.snapshot.filter(function (piece) { return piece.type !== 'ball'; }).length;
+          var score = Math.max(0, 1000 - pieces * 50 - Math.floor(simulationSeconds * 10));
+          if (arcadeScoreRun) { void arcadeScoreRun.finish(score); window.ArcadeScores.mountStatus(document.querySelector('.panel:last-of-type'), arcadeScoreRun); }
+          status.textContent = 'Doel gehaald! · ' + score + ' punten';
+        }
         hint.textContent = 'Mooi, de machine werkt. Tik op Stop om verder te bouwen.';
       }
     }
