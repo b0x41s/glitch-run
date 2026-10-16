@@ -172,7 +172,10 @@
       light.position.set(-3, 8, 12);
       state.scene.add(light);
 
-      const gltf = await new loaderModule.GLTFLoader().loadAsync('../models/laurens.glb');
+      const characterLoader = new loaderModule.GLTFLoader();
+      // Dist builds serve /models; the source-based Pages copy has /public/models.
+      const gltf = await characterLoader.loadAsync('../models/laurens.glb')
+        .catch(() => characterLoader.loadAsync('../public/models/laurens.glb'));
       if (!visible()) layer.hidden = true;
       const actor = new THREE.Group();
       actor.position.set(POSITION.x, POSITION.y, 0);
