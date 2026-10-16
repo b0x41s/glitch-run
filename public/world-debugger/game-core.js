@@ -20,23 +20,41 @@
     pine:{name:'Dennenboom',cell:6,size:72,home:'een koel bosgebied'},
     iceblock:{name:'IJsblok',cell:7,size:65,home:'een ijskoude omgeving'},
     icepeak:{name:'IJsberg',cell:4,size:90,home:'het poolgebied'},
-    stone:{name:'Rots',cell:8,size:58,home:'rotsachtig terrein'}
+    stone:{name:'Rots',cell:8,size:58,home:'rotsachtig terrein'},
+    camel:{name:'Dromedaris',atlas:'wildlife',cell:0,foot:421,size:108,home:'de warme woestijn'},
+    turtle:{name:'Zeeschildpad',atlas:'wildlife',cell:1,foot:421,size:86,home:'de warme zee en tropische kust'},
+    igloo:{name:'Iglo',atlas:'wildlife',cell:2,foot:424,size:104,home:'een ijskoud sneeuwlandschap'},
+    sunflower:{name:'Zonnebloem',atlas:'wildlife',cell:3,foot:832,size:76,home:'zonnige akkers en tuinen'},
+    tractor:{name:'Tractor',atlas:'wildlife',cell:4,foot:841,size:110,home:'het platteland'},
+    flamingo:{name:'Flamingo',atlas:'wildlife',cell:5,foot:843,size:100,home:'warme ondiepe kustlagunes'},
+    seal:{name:'Poolzeehond',atlas:'wildlife',cell:6,foot:1174,size:86,home:'de koude poolkust'},
+    haybale:{name:'Hooibaal',atlas:'wildlife',cell:7,foot:1169,size:74,home:'de boerderij en het hooiland'},
+    treasure:{name:'Schatkist',atlas:'wildlife',cell:8,foot:1182,size:80,home:'de piratenkust en de zeebodem'}
   };
+  // The generated atlas has uneven row gutters. Crop each measured row and
+  // align its actual contact point to the terrain without stretching the art.
+  const WILDLIFE_ROWS=[0,450,890,1254];
+  function spriteFrame(type){
+    const p=PROPS[type],row=Math.floor(p.cell/3),col=p.cell%3;
+    if(p.atlas!=='wildlife')return {x:col*50,y:row*50,height:1,anchor:87,backgroundHeight:300};
+    const top=WILDLIFE_ROWS[row],height=WILDLIFE_ROWS[row+1]-top;
+    return {x:col*50,y:top/(1254-height)*100,height:height/418,anchor:(p.foot-top)/height*100,backgroundHeight:1254/height*100};
+  }
   const FOREIGN={
-    alpine:['cactus','palm','penguin'],
-    desert:['pine','snowman','penguin','iceblock','icepeak'],
-    coral:['penguin','iceblock','icepeak','snowman'],
-    volcano:['palm','iceblock','snowman','penguin','pine'],
-    frozen:['cactus','palm'],
-    harvest:['palm','icepeak','penguin','iceblock'],
-    ocean:['barn','cactus','snowman']
+    alpine:['cactus','palm','penguin','camel','turtle','flamingo'],
+    desert:['pine','snowman','penguin','iceblock','icepeak','seal','igloo','turtle'],
+    coral:['penguin','iceblock','icepeak','snowman','igloo','seal'],
+    volcano:['palm','iceblock','snowman','penguin','pine','camel','turtle','seal','sunflower','igloo'],
+    frozen:['cactus','palm','camel','flamingo','sunflower','turtle'],
+    harvest:['palm','icepeak','penguin','iceblock','igloo','turtle','seal'],
+    ocean:['barn','cactus','snowman','camel','igloo','sunflower','tractor','haybale']
   };
-  const NATIVE={alpine:['pine'],desert:['cactus','palm'],coral:['palm','stone'],volcano:['stone'],frozen:['penguin','iceblock','icepeak'],harvest:['barn','pine'],ocean:['stone']};
+  const NATIVE={alpine:['pine'],desert:['cactus','palm','camel'],coral:['palm','stone','turtle','flamingo','treasure'],volcano:['stone'],frozen:['penguin','iceblock','icepeak','igloo','seal'],harvest:['barn','pine','sunflower','tractor','haybale'],ocean:['stone','turtle','treasure']};
   // Continuous ground patches spread across each island. These are terrain
   // regions, not the three old object anchors; surface clipping keeps feet on the tile.
   const SEARCH_AREAS={
     alpine:[[.16,.49,.22,.56],[.24,.55,.34,.63],[.29,.64,.37,.68],[.40,.35,.46,.41],[.58,.43,.64,.49],[.62,.57,.69,.64],[.56,.70,.64,.77],[.71,.62,.79,.69],[.80,.54,.86,.61]],
-    desert:[[.16,.53,.23,.61],[.22,.64,.34,.72],[.34,.71,.43,.77],[.43,.77,.53,.82],[.58,.70,.67,.78],[.72,.66,.81,.73],[.78,.56,.87,.63],[.65,.46,.72,.53],[.45,.65,.53,.71]],
+    desert:[[.16,.53,.23,.61],[.22,.64,.34,.72],[.34,.71,.43,.77],[.43,.77,.53,.82],[.58,.70,.67,.78],[.72,.66,.81,.73],[.78,.56,.87,.63],[.45,.65,.53,.71]],
     coral:[[.16,.47,.24,.53],[.22,.56,.31,.64],[.33,.60,.41,.67],[.40,.53,.48,.60],[.48,.46,.55,.53],[.30,.40,.37,.46],[.42,.35,.48,.41],[.59,.42,.65,.48],[.20,.38,.27,.45],[.12,.48,.17,.54],[.66,.39,.72,.43],[.48,.30,.54,.35]],
     volcano:[[.17,.49,.26,.58],[.24,.60,.32,.66],[.32,.67,.40,.73],[.42,.73,.50,.80],[.54,.69,.63,.75],[.67,.62,.76,.68],[.78,.53,.85,.59],[.24,.43,.31,.48],[.68,.44,.75,.50]],
     frozen:[[.12,.47,.20,.53],[.20,.55,.29,.61],[.28,.60,.35,.66],[.34,.66,.42,.72],[.43,.70,.51,.76],[.52,.77,.61,.82],[.63,.71,.70,.76],[.69,.64,.76,.69],[.79,.51,.86,.57]],
@@ -158,7 +176,11 @@
       this.targets=types.map((type,i)=>make(type,i));this.nativeProps=[];this.layoutVersion=2;
       if(this.variation==='classic')placeProps(this.targets,this.biome.id,this.levelRng,'classic',previous);
       else{
-        for(let i=0;i<nativeCount(this.index);i++){const pool=NATIVE[this.biome.id].filter(type=>(PROPS[type].size<=100&&type!=='barn')||!this.nativeProps.some(p=>PROPS[p.type].size>100||p.type==='barn'));this.nativeProps.push(make(pool[Math.floor(this.levelRng()*pool.length)],i,true));}
+        for(let i=0;i<nativeCount(this.index);i++){
+          const pool=NATIVE[this.biome.id].filter(type=>(PROPS[type].size<=100&&type!=='barn')||!this.nativeProps.some(p=>PROPS[p.type].size>100||p.type==='barn'));
+          const unseen=pool.filter(type=>!this.nativeProps.some(p=>p.type===type)),choices=unseen.length?unseen:pool;
+          this.nativeProps.push(make(choices[Math.floor(this.levelRng()*choices.length)],i,true));
+        }
         placeProps([...this.targets,...this.nativeProps],this.biome.id,this.levelRng,'diorama',previous);
       }
       this.rememberLayout();
@@ -249,6 +271,6 @@
     snapshotFields(raw){const fields=['layoutVersion','mode','perk','variation','dailyDate','score','total','mistakes','errors','hints','combo','maxCombo','index','order','targets','nativeProps','limit','remaining','countdownRemaining','elapsed','missionElapsed','bonus','results','perkUsed','freezeRemaining','levelErrors','levelHints'];return Object.fromEntries(fields.map(key=>[key,raw[key]]));}
     get found(){return this.targets.filter(t=>t.found).length;}
   }
-  const api={BIOMES,PROPS,MODES,PERKS,FOREIGN,NATIVE,SEARCH_AREAS,CLASSIC_AREAS,onSurface,nativeCount,propsOverlap,Expedition,dailyMission};
+  const api={BIOMES,PROPS,MODES,PERKS,FOREIGN,NATIVE,SEARCH_AREAS,CLASSIC_AREAS,onSurface,nativeCount,propsOverlap,spriteFrame,Expedition,dailyMission};
   if(typeof module==='object'&&module.exports)module.exports=api;else root.WorldDebugger=api;
 })(typeof globalThis!=='undefined'?globalThis:this);

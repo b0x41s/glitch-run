@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#0a1518">
 <meta name="description" content="Verken zeven spectaculaire biomes. Vind de objecten die niet in hun wereld thuishoren en herstel de balans.">
-<meta name="application-version" content="2.4.1">
-<title>World Debugger · Echoes of the Wild</title><link rel="icon" href="assets/icon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2.4.1">
+<meta name="application-version" content="2.5.0">
+<title>World Debugger · Echoes of the Wild</title><link rel="icon" href="assets/icon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css?v=2.5.0">
 </head>
 <body>
 <svg class="icon-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
@@ -21,7 +21,7 @@
 <main id="app" class="game-app">
   <section id="menu" class="menu-screen" aria-labelledby="gameTitle">
     <div class="menu-art" id="menuArt"></div><div class="menu-shade"></div><canvas id="menuParticles" class="particles" aria-hidden="true"></canvas>
-    <nav class="menu-nav"><a class="wordmark" href="./"><svg class="icon"><use href="#i-cross"/></svg><span>WORLD DEBUGGER</span></a><span class="nav-edition">ECHOES OF THE WILD <span>V2.4.1</span></span><button class="icon-button sound-button" aria-label="Geluid aanzetten" aria-pressed="false"><svg class="icon"><use href="#i-sound"/></svg><span class="sound-slash"></span></button></nav>
+    <nav class="menu-nav"><a class="wordmark" href="./"><svg class="icon"><use href="#i-cross"/></svg><span>WORLD DEBUGGER</span></a><span class="nav-edition">ECHOES OF THE WILD <span>V2.5.0</span></span><button class="icon-button sound-button" aria-label="Geluid aanzetten" aria-pressed="false"><svg class="icon"><use href="#i-sound"/></svg><span class="sound-slash"></span></button></nav>
     <div class="menu-copy"><div class="eyebrow"><span></span> ZEVEN WERELDEN. ÉÉN VERSTOORDE BALANS.</div><h1 id="gameTitle">Elke wereld<br>heeft zijn <em>geheim.</em></h1><p>Reis door adembenemende biomes. Ontdek wat er niet<br class="desktop-break"> thuishoort. Breng de natuur weer in balans.</p>
     <div class="menu-modes" role="group" aria-label="Spelmodus"><button class="mode-button selected" data-mode="timed" aria-pressed="true"><span class="mode-dot"></span>Expeditie <small>60 sec → steeds sneller</small></button><button class="mode-button" data-mode="sprint" aria-pressed="false"><span class="mode-dot"></span>Sprint <small>35 sec · razendsnel zoeken</small></button><button class="mode-button" data-mode="survival" aria-pressed="false"><span class="mode-dot"></span>Overleving <small>3 levens voor de hele reis</small></button><button class="mode-button" data-mode="night" aria-pressed="false"><span class="mode-dot"></span>Nachtwacht <small>75 sec · zoeken met licht</small></button><button class="mode-button" data-mode="daily" aria-pressed="false"><span class="mode-dot"></span>Dagmissie <small>Vaste route · iedere dag nieuw</small></button><button class="mode-button" data-mode="relaxed" aria-pressed="false"><span class="mode-dot"></span>Vrij verkennen <small>Geen tijdsdruk</small></button></div>
     <div class="daily-briefing" id="dailyBriefing" hidden></div><div class="loadout-row"><button class="loadout-button" id="btnLoadout"><span class="tiny-label">JOUW PERK</span><strong id="selectedPerk">Pure natuur</strong><span>Wijzigen ↗</span></button><button class="loadout-button career-button" id="btnCareer"><span class="tiny-label">JOUW VELDGIDS</span><strong id="careerRank">Verkenner · rang 1</strong><span id="careerSummary">0 / 7 medailles</span></button></div>
@@ -42,5 +42,5 @@
 </main>
 <dialog id="overlay" class="game-dialog" aria-labelledby="overlayTitle"><div id="overlayBody"></div></dialog>
 <div class="loading-screen" id="loadingScreen" hidden><svg class="icon"><use href="#i-cross"/></svg><p id="loadingText" role="status">De wereld wordt wakker…</p></div>
-<script src="biomes/alpine.js?v=2.4.1"></script><script src="biomes/desert.js?v=2.4.1"></script><script src="biomes/coral.js?v=2.4.1"></script><script src="biomes/volcano.js?v=2.4.1"></script><script src="biomes/frozen.js?v=2.4.1"></script><script src="biomes/harvest.js?v=2.4.1"></script><script src="biomes/ocean.js?v=2.4.1"></script><script src="game-core.js?v=2.4.1"></script><script src="progression.js?v=2.4.1"></script><script src="biome-motion.js?v=2.4.1"></script><script src="soundscape.js?v=2.4.1"></script><script src="camera.js?v=2.4.1"></script><script src="engine.js?v=2.4.1"></script>
+<script src="biomes/alpine.js?v=2.5.0"></script><script src="biomes/desert.js?v=2.5.0"></script><script src="biomes/coral.js?v=2.5.0"></script><script src="biomes/volcano.js?v=2.5.0"></script><script src="biomes/frozen.js?v=2.5.0"></script><script src="biomes/harvest.js?v=2.5.0"></script><script src="biomes/ocean.js?v=2.5.0"></script><script src="game-core.js?v=2.5.0"></script><script src="progression.js?v=2.5.0"></script><script src="biome-motion.js?v=2.5.0"></script><script src="soundscape.js?v=2.5.0"></script><script src="camera.js?v=2.5.0"></script><script src="engine.js?v=2.5.0"></script>
 </body></html>

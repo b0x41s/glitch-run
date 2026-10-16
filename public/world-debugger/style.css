@@ -45,7 +45,8 @@ g.asset.hinted:not(.found){filter:brightness(1.5) drop-shadow(0 0 4px #e6ffd3)}
 .biome-mini>.diorama-render{transform:scale(1.2)}
 .campaign-mini>.diorama-render{transform:scale(1.2)}
 .world-stage.rendered .world-image{pointer-events:none}
-.target .prop{background-image:url('assets/diorama-props.webp');background-size:300% 300%}
+.target .prop{background-image:url('assets/diorama-props.webp');background-size:300% var(--atlas-height,300%)}
+.target[data-atlas="wildlife"] .prop{background-image:url('assets/wildlife-props.webp')}
 :root{--ink:#09132c;--panel:#101f36}
 .menu-art{background:radial-gradient(ellipse at 74% 48%,#1c3454,#0a1939 55%,#071228 85%)}
 .menu-shade{background:linear-gradient(90deg,#061129ed 0%,#07162bba 35%,#07162b00 75%),linear-gradient(0deg,#08152d 0%,#08152dbb 10%,transparent 45%,#06112844 100%)}
@@ -186,4 +187,4 @@ g.asset.hinted:not(.found){filter:brightness(1.5) drop-shadow(0 0 4px #e6ffd3)}
 
 /* Match the game model at every camera scale. Touch padding belongs to the
    hit area; it must not enlarge the artwork into neighboring objects. */
-.target .prop{position:absolute;left:50%;top:87%;width:var(--sprite-size);height:var(--sprite-size);translate:-50% -87%}
+.target .prop{position:absolute;left:50%;top:87%;width:var(--sprite-size);height:var(--sprite-height,var(--sprite-size));translate:-50% var(--sprite-anchor,-87%)}

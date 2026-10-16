@@ -1,7 +1,7 @@
 (function(){
   'use strict';
   const $=s=>document.querySelector(s);
-  const {BIOMES,PROPS,MODES,PERKS,Expedition,dailyMission}=window.WorldDebugger;
+  const {BIOMES,PROPS,MODES,PERKS,Expedition,dailyMission,spriteFrame}=window.WorldDebugger;
   const {Career,MEDALS,BADGES}=window.WorldProgression;
   const {BiomeMotion}=window.WorldBiomeMotion;
   const {fitWorld}=window.WorldCamera;let cameraZoom=1,cameraSize=null;
@@ -100,8 +100,8 @@
     if(graphics==='diorama'){
       $('#worldImage').innerHTML=preview(game.biome.id,'stage');
       $('#targetLayer').innerHTML=[...game.targets,...game.nativeProps].map(t=>{
-        const p=PROPS[t.type],col=p.cell%3,row=Math.floor(p.cell/3);
-        return `<button class="target ${t.id.startsWith('native-')?'native-prop':''}" data-id="${t.id}" data-asset="${t.type}" style="left:${t.x*100}%;top:${t.y*100}%;--sprite-size:${p.size*(t.scale||1)/10}cqw;--size:max(8cqw,var(--sprite-size));--sprite-x:${col*50}%;--sprite-y:${row*50}%" aria-label="${p.name}"><span class="prop"></span></button>`;
+        const p=PROPS[t.type],frame=spriteFrame(t.type),size=p.size*(t.scale||1)/10;
+        return `<button class="target ${t.id.startsWith('native-')?'native-prop':''}" data-id="${t.id}" data-asset="${t.type}" data-atlas="${p.atlas||'original'}" style="left:${t.x*100}%;top:${t.y*100}%;--sprite-size:${size}cqw;--sprite-height:${size*frame.height}cqw;--sprite-anchor:${-frame.anchor}%;--atlas-height:${frame.backgroundHeight}%;--size:max(8cqw,var(--sprite-size));--sprite-x:${frame.x}%;--sprite-y:${frame.y}%" aria-label="${p.name}"><span class="prop"></span></button>`;
       }).join('');return;
     }
     $('#worldImage').innerHTML=sceneMarkup(game.biome.id,'stage');
@@ -168,7 +168,7 @@
   }
   async function loading(action,id,restoring=false){
     if(busy)return;busy=true;pendingLoad={action,id,restoring};$('#loadingScreen').hidden=false;
-    try{if(graphics==='diorama')await Promise.all([...BIOMES.map(b=>loadImage(`assets/biomes/${b.id}.webp`)),loadImage('assets/biomes/ocean-live.webp'),loadImage('assets/biomes/harvest-live.webp'),loadImage('assets/shark.webp'),loadImage('assets/diorama-props.webp')]);action();if((document.hidden||!document.hasFocus())&&['playing','countdown','ready'].includes(game.phase))game.pause();closeDialog();enterWorld();if(game.phase!=='playing'){shownPhase=game.phase;showDialog(game.phase==='paused'?'pause':game.phase);}saveCampaign();pendingLoad=null;}
+    try{if(graphics==='diorama')await Promise.all([...BIOMES.map(b=>loadImage(`assets/biomes/${b.id}.webp`)),loadImage('assets/biomes/ocean-live.webp'),loadImage('assets/biomes/harvest-live.webp'),loadImage('assets/shark.webp'),loadImage('assets/diorama-props.webp'),loadImage('assets/wildlife-props.webp')]);action();if((document.hidden||!document.hasFocus())&&['playing','countdown','ready'].includes(game.phase))game.pause();closeDialog();enterWorld();if(game.phase!=='playing'){shownPhase=game.phase;showDialog(game.phase==='paused'?'pause':game.phase);}saveCampaign();pendingLoad=null;}
     catch{showDialog('error');}finally{busy=false;$('#loadingScreen').hidden=true;}
   }
   function start(){if(mode==='daily'){dailyDay=new Date().toISOString().slice(0,10);selectWorld(dailyMission(dailyDay).first);menuBest();}loading(()=>{awarded=0;finished=false;newBadges=[];game.start(selected,mode,perk,dailyDay,graphics);game.beginStartCountdown();},selected);}
