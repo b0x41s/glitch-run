@@ -44,6 +44,21 @@ function addContraptionLabCard() {
   `);
 }
 
+function addWorldDebuggerCard() {
+  if (!arcadeGrid || arcadeGrid.querySelector('[data-arcade-game="world-debugger"]')) return;
+  arcadeGrid.insertAdjacentHTML('beforeend', `
+    <a class="arcade-game-card world-debugger" data-arcade-game="world-debugger" href="./world-debugger/">
+      <span class="arcade-card-visual" aria-hidden="true"><img src="./world-debugger/assets/biomes/alpine.webp" alt="" loading="lazy" decoding="async"></span>
+      <span class="arcade-card-content">
+        <span class="arcade-card-meta"><span>Zoekavontuur</span><span>Singleplayer</span><span>Mobiel</span></span>
+        <h2>World Debugger</h2>
+        <p>Zoek de buitenbeentjes in zeven levende biomen. Speel tegen de klok, kies je perk en verdien medailles.</p>
+        <span class="arcade-card-action">Start World Debugger <b aria-hidden="true">→</b></span>
+      </span>
+    </a>
+  `);
+}
+
 function showArcadeMenu() {
   if (!arcadeMenu) return;
 
@@ -70,6 +85,7 @@ function showGlitchRun() {
 
 addMetroViceCard();
 addContraptionLabCard();
+addWorldDebuggerCard();
 playGlitchRun?.addEventListener('click', showGlitchRun);
 openArcadeMenu?.addEventListener('click', showArcadeMenu);
 

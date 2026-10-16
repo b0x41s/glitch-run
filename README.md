@@ -69,3 +69,10 @@ Repository → Settings → Pages → Build and deployment → Source → GitHub
 - Web Audio API
 - Lokale opslag voor highscores per character
 - GitHub Actions en GitHub Pages
+
+
+## World Debugger
+
+Kies **World Debugger** in de arcade of open <https://b0x41s.github.io/glitch-run/world-debugger/>. Verken zeven dioramabiomen, vind vreemde objecten op wisselende plekken en verdien medailles. De game heeft zes spelmodi, perks, lokaal hervatten, een 3–2–1–GO-start en een overslaande levelovergang. Geluid bevat alleen korte effecten; er is geen achtergrondmuziek.
+
+De zelfstandige game staat in `world-debugger/` voor de rechtstreeks gehoste Pages-versie en in `public/world-debugger/` voor Vite-builds. Beide kopieën bevatten dezelfde runtimebestanden. De knop **Alle spellen** leidt terug naar de arcade.
