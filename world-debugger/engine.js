@@ -4,7 +4,7 @@
   const {BIOMES,PROPS,MODES,PERKS,Expedition,dailyMission,spriteFrame}=window.WorldDebugger;
   const {Career,MEDALS,BADGES}=window.WorldProgression;
   const {BiomeMotion}=window.WorldBiomeMotion;
-  const {fitWorld}=window.WorldCamera;let cameraZoom=1,cameraSize=null;
+  const {fitWorld}=window.WorldCamera;let cameraZoom=1,cameraSize=null,cameraAdjusted=false;
   const icon=id=>`<svg class="icon" aria-hidden="true"><use href="#i-${id}"/></svg>`;
   const fmt=s=>`${String(Math.floor(s/60)).padStart(2,'0')}:${String(Math.floor(s%60)).padStart(2,'0')}`;
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
@@ -294,13 +294,14 @@
     if($('#play').hidden)return;
     const viewport=$('#worldViewport'),box=viewport.getBoundingClientRect(),width=viewport.clientWidth||box.width,height=viewport.clientHeight||box.height;
     if(!width||!height)return;
+    if(!cameraAdjusted)cameraZoom=window.matchMedia('(max-width:600px) and (orientation:portrait)').matches?1.12:1;
     const old=cameraSize,centerX=old?(viewport.scrollLeft+width/2)/old.width:.5,centerY=old?(viewport.scrollTop+height/2-old.top)/old.height:.5;
     const size=fitWorld(width,height,cameraZoom);cameraSize=size;const stage=$('#worldStage');stage.style.width=size.width+'px';stage.style.height=size.height+'px';stage.style.marginTop=size.top+'px';stage.style.marginBottom=size.top+'px';
-    viewport.scrollLeft=reset?0:Math.max(0,centerX*size.width-width/2);viewport.scrollTop=reset?0:Math.max(0,centerY*size.height+size.top-height/2);
+    viewport.scrollLeft=reset?Math.max(0,(size.width-width)/2):Math.max(0,centerX*size.width-width/2);viewport.scrollTop=reset?Math.max(0,(size.height-height)/2):Math.max(0,centerY*size.height+size.top-height/2);
     $('#cameraZoom').textContent=Math.round(cameraZoom*100)+'%';$('#btnZoomOut').disabled=cameraZoom<=1;$('#btnZoomIn').disabled=cameraZoom>=2.4;
     $('#cameraHelp').textContent=cameraZoom===1?'De hele wereld in beeld. Zoom in voor details.':'Sleep of veeg om rond te kijken.';
   }
-  function zoomCamera(amount){if(busy||!['playing','paused'].includes(game.phase))return;cameraZoom=Math.max(1,Math.min(2.4,amount===0?1:Math.round((cameraZoom+amount)*100)/100));updateCamera(amount===0);}
+  function zoomCamera(amount){if(busy||!['playing','paused'].includes(game.phase))return;cameraAdjusted=true;cameraZoom=Math.max(1,Math.min(2.4,amount===0?1:Math.round((cameraZoom+amount)*100)/100));updateCamera(amount===0);}
   $('#btnZoomIn').addEventListener('click',()=>zoomCamera(.35));$('#btnZoomOut').addEventListener('click',()=>zoomCamera(-.35));$('#btnCameraFit').addEventListener('click',()=>zoomCamera(0));
   if(window.ResizeObserver)new ResizeObserver(()=>updateCamera()).observe($('#worldViewport'));else window.addEventListener('resize',()=>updateCamera());
   let drag=null,suppressClickUntil=0,beamX=.5,beamY=.5;

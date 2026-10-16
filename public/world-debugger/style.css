@@ -188,3 +188,8 @@ g.asset.hinted:not(.found){filter:brightness(1.5) drop-shadow(0 0 4px #e6ffd3)}
 /* Match the game model at every camera scale. Touch padding belongs to the
    hit area; it must not enlarge the artwork into neighboring objects. */
 .target .prop{position:absolute;left:50%;top:87%;width:var(--sprite-size);height:var(--sprite-height,var(--sprite-size));translate:-50% var(--sprite-anchor,-87%)}
+
+/* Give phone dioramas the full screen width, keeping the controls inset. */
+@media(max-width:480px){
+  .world-viewport{margin-inline:-12px;border-radius:0}
+}
