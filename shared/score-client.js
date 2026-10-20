@@ -51,8 +51,8 @@
         return data;
       }catch(e){if(e instanceof ApiError)throw e;throw new ApiError(0,'Scoreverbinding niet beschikbaar');}finally{clearTimeout(timer);}
     }
-    async function authenticate(kind,username,password){
-      const data=await request('/auth/'+kind,{method:'POST',body:{username,password}});
+    async function authenticate(kind,username,password,registrationCode){
+      const data=await request('/auth/'+kind,{method:'POST',body:{username,password,...(kind==='register'?{registration_code:registrationCode||''}:{})}});
       if(!validUser(data?.user)||typeof data.token!=='string')throw new ApiError(0,'Ongeldig antwoord van de score-API');
       if(!write(authKey,{api:apiUrl,user:data.user,token:data.token}))throw new ApiError(507,'Je browser kan de accountsessie niet bewaren.');emit();void flush();return data.user;
     }
@@ -147,7 +147,7 @@
       beginLocalRun:(game,character='default')=>handle(game,character,null,true),
       localRecords,pendingCount:()=>pending().filter(e=>e.owner===session()?.user.id).length,
       onChange:fn=>{listeners.add(fn);return ()=>listeners.delete(fn);},
-      login:(u,p)=>authenticate('login',u,p),register:(u,p)=>authenticate('register',u,p),logout,
+      login:(u,p)=>authenticate('login',u,p),register:(u,p,code)=>authenticate('register',u,p,code),logout,
       me:()=>request('/me',{auth:true}),games:()=>request('/games'),
       leaderboard:(game,options={})=>request('/games/'+encodeURIComponent(game)+'/leaderboard?'+query({period:'all',limit:100,...options})),
       records:game=>request('/games/'+encodeURIComponent(game)+'/records'),

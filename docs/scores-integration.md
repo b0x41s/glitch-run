@@ -46,3 +46,18 @@ Testaccounts en testscores bestaan alleen in de tijdelijke lokale database; er z
 Bij de eindcontrole leveren zowel Cloudflare DNS-over-HTTPS als Google DNS nog geen A-adres voor `scores.b0x41s.nl`; rechtstreeks HTTPS verbinden kan daardoor nog niet. De server op OpenClaw is wel gezond. De nog door de beheerder te activeren publieke DNS-/tunnelroute staat los van de geteste applicatie-integratie en wordt niet als geslaagde publieke accounttest gepresenteerd. Bronhosting is aanvullend met echte Chrome gecontroleerd: één Biomes-tegel, de scorepagina en het laden/starten van de echte Glitch Run-modellen. De mobiele scorepagina is op 390 en 320 pixels beoordeeld.
 
 De eerste Actions-build vond een ontbrekende optionele peerdependency in het lockbestand die lokaal met npm 11 niet werd gemeld. Het volledige lockbestand is in een lege werkmap aangevuld met de werkelijk door GitHub gebruikte npm 10.9.9. Zowel `npm 10.9.9 ci` als `npm 11.6.2 ci`, de 11 regeltests, productiebuild en audit slagen daarmee. De root- en public-runtimekopieën zijn vergeleken met de productie-output. De oorspronkelijke mislukte CI-uitvoering wordt niet als geslaagde build geteld.
+
+## Invitation-only registration
+The account form has a required **Aanmeldcode** field only in registration mode.
+The shared client sends it as `registration_code` to `POST /v1/auth/register`.
+The backend validates its SHA-256 digest against private server configuration
+`REGISTRATION_CODE_SHA256`; absent configuration closes registration.
+The actual invitation and digest must never be committed to this repository.
+The invitation is cleared after every attempt and is not stored in browser storage.
+Login requires only the existing username/password.
+
+The production backend source is maintained separately in `~/code/highscore-api`
+and `/home/b0x41s/highscore-api` on OpenClaw. `highscore-backend.patch` describes
+the initial arcade integration, not the complete invitation/runtime hardening
+added later. The current backend also separates administrative schema setup from
+the restricted API database role and keeps API networks internal.

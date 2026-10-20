@@ -6,8 +6,8 @@
   <title>Scores · Tex Arcade</title>
   <link rel="stylesheet" href="./scores.css?v=1">
   <script defer src="../shared/arcade-config.js?v=1"></script>
-  <script defer src="../shared/score-client.js?v=1"></script>
-  <script defer src="./scores.js?v=1"></script>
+  <script defer src="../shared/score-client.js?v=2"></script>
+  <script defer src="./scores.js?v=2"></script>
 </head>
 <body>
   <div class="score-room">
@@ -31,7 +31,7 @@
             <p id="accountIntro">Log in op elk apparaat met hetzelfde account. Je games blijven ook zonder account speelbaar.</p>
             <div id="signedIn" hidden><strong id="playerName"></strong><button id="logout" class="quiet-button">Uitloggen</button><p class="subtle">Je online records horen bij dit account.</p></div>
             <div id="authArea"><div class="auth-tabs" role="group" aria-label="Accountactie"><button id="loginMode" aria-pressed="true">Inloggen</button><button id="registerMode" aria-pressed="false">Account maken</button></div>
-              <form id="accountForm"><label>Spelersnaam<input id="username" name="username" autocomplete="username" minlength="3" maxlength="20" pattern="[A-Za-z0-9_\-]{3,20}" required placeholder="Jouw spelersnaam"></label><label>Wachtwoord<input id="password" name="password" type="password" autocomplete="current-password" minlength="10" maxlength="128" required placeholder="Minimaal 10 tekens"></label><p class="input-help">Spelersnaam: 3–20 letters, cijfers, _ of -.</p><button id="authSubmit" class="primary-button" type="submit">Inloggen</button></form>
+              <form id="accountForm"><label>Spelersnaam<input id="username" name="username" autocomplete="username" minlength="3" maxlength="20" pattern="[A-Za-z0-9_\-]{3,20}" required placeholder="Jouw spelersnaam"></label><label>Wachtwoord<input id="password" name="password" type="password" autocomplete="current-password" minlength="10" maxlength="128" required placeholder="Minimaal 10 tekens"></label><label id="registrationCodeField" hidden>Aanmeldcode<input id="registrationCode" name="registration_code" type="password" autocomplete="off" maxlength="128" disabled placeholder="Code die je hebt ontvangen"></label><p class="input-help">Spelersnaam: 3–20 letters, cijfers, _ of -.</p><button id="authSubmit" class="primary-button" type="submit">Inloggen</button></form>
             </div><p id="authMessage" role="status" class="form-message"></p>
           </section>
           <section class="personal-section" aria-labelledby="personalTitle"><div class="section-heading"><h2 id="personalTitle">Jouw accountrecords</h2><span class="personal-period">All-time</span></div><div id="personalRecords"><p class="subtle">Log in om je scores van alle apparaten te zien.</p></div></section>
